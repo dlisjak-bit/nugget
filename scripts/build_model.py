@@ -18,7 +18,7 @@ import xml.etree.ElementTree as ET
 import numpy as np
 import trimesh
 
-from chicken_bot.poses import POSES
+from chicken_bot.poses import POSES, set_standing_pose
 from chicken_bot.robot import CAD_URL, JOINTS, MODEL_DIR
 XML_PATH = MODEL_DIR / "scene.xml"
 BENCH_PATH = MODEL_DIR / "bench.xml"
@@ -230,6 +230,14 @@ def build() -> Path:
         ET.SubElement(keys, "key", name=name, qpos=numbers((0, 0, TORSO_Z, 1, 0, 0, 0)) + " " + values, ctrl=values)
     tree = ET.ElementTree(model)
     ET.indent(tree, space="  ")
+    tree.write(XML_PATH, encoding="unicode", xml_declaration=True)
+    # The CAD reference frames stay unchanged; the named stand key uses the
+    # validated joint targets and corresponding sole-aligned floating base.
+    import mujoco
+    compiled = mujoco.MjModel.from_xml_path(str(XML_PATH))
+    standing = mujoco.MjData(compiled)
+    set_standing_pose(compiled, standing)
+    keys.find("key[@name='stand']").set("qpos", numbers(standing.qpos))
     tree.write(XML_PATH, encoding="unicode", xml_declaration=True)
     # Keep a separate fixed-base, contact-free model for the first lesson.
     bodies["Torso"].remove(bodies["Torso"].find("freejoint"))

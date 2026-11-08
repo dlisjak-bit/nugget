@@ -1,19 +1,17 @@
 # Nugget
 
-A hobby robotics project.
-
 ![Chicken bot prototype render](docs/images/proto_render.png)
 
 ## Quick blog
 
-Robotics is getting accessible, so designing one is now a weekend side challenge.
+Robotics is getting accessible, so I took a side challenge of designing one.
 
-Inspiration: All those cute robots
-Goal: Make a chicken that runs as fast as possible
-CAD: ForgeCAD + Codex + Eyes
-Model and physics: MuJoCo
-Learning Env: Gymnasium (for now)
-Brains: TBD 
+Inspiration: All those cute robots. 
+Goal: Make a chicken that runs as fast as possible. 
+CAD: ForgeCAD + Codex + Eyes. 
+Model and physics: MuJoCo. 
+Learning Env: Gymnasium (for now). 
+Brains: TBD. 
 
 
 ## Dev guide

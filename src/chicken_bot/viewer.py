@@ -14,7 +14,7 @@ import mujoco
 import mujoco.viewer
 import numpy as np
 
-from chicken_bot.poses import POSES
+from chicken_bot.poses import POSES, set_standing_pose
 from chicken_bot.robot import BENCH, JOINTS, SCENE
 
 
@@ -59,13 +59,22 @@ def apply_pose(model, data, name: str, *, place_joints: bool = False):
         mujoco.mj_forward(model, data)
 
 
+def reset_to_stand(model, data, drop_height=0.0):
+    """Same reference stance as training, without random reset perturbations."""
+    mujoco.mj_resetData(model, data)
+    set_standing_pose(model, data)
+    if model.nq > len(JOINTS):
+        data.qpos[2] += drop_height
+        mujoco.mj_forward(model, data)
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--bench", action="store_true", help="use the original pinned-torso model without contacts")
     parser.add_argument("--servo", action=argparse.BooleanOptionalAction, default=None, help="servo physics (default on, off for --bench)")
     parser.add_argument("--gravity", action=argparse.BooleanOptionalAction, default=None, help="gravity (default on, off for --bench)")
     parser.add_argument("--pose", action="store_true", help="start in direct joint-placement mode without stepping physics")
-    parser.add_argument("--drop-height", type=float, default=None, help="start this many metres above home (default 0.02, or 0 for --bench)")
+    parser.add_argument("--drop-height", type=float, default=None, help="start this many metres above home (default 0: grounded standing pose)")
     parser.add_argument("--seconds", type=float, help="close after this many wall seconds (optional smoke test)")
     args = parser.parse_args()
     scene_path = BENCH if args.bench else SCENE
@@ -73,17 +82,14 @@ def main():
         raise SystemExit("Missing generated model. Run: uv run python scripts/build_model.py")
     model = mujoco.MjModel.from_xml_path(str(scene_path))
     data = mujoco.MjData(model)
-    drop_height = args.drop_height if args.drop_height is not None else (0 if args.bench else 0.02)
+    drop_height = args.drop_height if args.drop_height is not None else 0.0
     if drop_height < 0 or not np.isfinite(drop_height):
         parser.error("--drop-height must be a finite nonnegative number")
     if args.bench and drop_height:
         parser.error("--drop-height requires the floating model; omit --bench")
 
     def reset():
-        mujoco.mj_resetData(model, data)
-        if not args.bench:
-            data.qpos[2] += drop_height
-        apply_pose(model, data, "stand", place_joints=True)
+        reset_to_stand(model, data, drop_height)
 
     reset()
     addresses = [int(model.joint(name).qposadr[0]) for name in JOINTS]
@@ -108,7 +114,7 @@ def main():
     print("Mac: hold Fn if the function keys control brightness/media.", flush=True)
     print("Mouse: left-drag orbit, right-drag pan, scroll zoom. Close the window to stop.", flush=True)
     print("Servo gains/inertias/torque cap are teaching assumptions, not a calibrated XL330 model.", flush=True)
-    print("No balance controller: expect tipping/collapse. Yellow dot = estimated COM; line = floor projection.", flush=True)
+    print("Starts in the validated standing pose; no active balance controller. Yellow dot = estimated COM; line = floor projection.", flush=True)
     announce()
 
     with mujoco.viewer.launch_passive(
