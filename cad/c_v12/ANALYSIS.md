@@ -1,0 +1,9 @@
+# Chiken architecture study
+
+Use case: compare three cute, compact eight-actuator biped layouts before committing to a manufactured mechanism. See ARCHITECTURES.md for their boundaries, dimensions, loads, mass assumptions and limitations.
+
+The torso carries two hip-roll motor cases. Each moving roll cradle carries a hip-pitch motor case, with its output driving a thigh. A and C carry the knee case on the thigh at the knee axis. B moves that case proximally and uses a 1:1 belt coupling to a supported knee hinge. The shin carries the ankle case and its output drives the foot. Fixed parts have no relative DOF; each leg retains four independent revolute coordinates. B adds a dependent source shaft per leg. The torso is fixed for pose inspection; this is not balance control.
+
+Motor reaction torque returns through the case attachment to its carrier. Output torque passes through the disk or belt and hinge shaft to the next link. Support loads return through the hip cradle and pelvis. The ground load path is not validated by the fixed-root CAD fixture. B's belt has about 58 N differential span force at the catalog 0.52 N m stall torque with the assumed 8.91 mm pitch radius. Tooth strength, pretension, bearing loads and plastic screw pull-out are unresolved.
+
+Acceptance for these concept versions: model builds, parts have geometry, carrier connectivity is inspected, sole heights and hip spacing are correct, selected motor mass is counted once, eight independent joint controls remain usable, and an explicit interference report is retained. Interferences do not constitute an accepted physical design. The old ranges and animations are exploratory and require a new clearance study. Manufacture, full motion clearance, cable routing, service splits, strength, thermal operation and dynamic locomotion remain open. No concept is a fabrication release.

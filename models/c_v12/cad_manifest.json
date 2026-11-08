@@ -1,0 +1,410 @@
+{
+  "asset": {
+    "version": "2.0",
+    "generator": "ForgeCAD glTF Export"
+  },
+  "scene": 0,
+  "nodes": [
+    {
+      "name": "Torso",
+      "mesh": 0
+    },
+    {
+      "name": "Head",
+      "mesh": 1
+    },
+    {
+      "name": "Face_panel",
+      "mesh": 2
+    },
+    {
+      "name": "Left_eye",
+      "mesh": 3
+    },
+    {
+      "name": "Right_eye",
+      "mesh": 4
+    },
+    {
+      "name": "Left_side_panel_front",
+      "mesh": 5
+    },
+    {
+      "name": "Left_side_panel_rear",
+      "mesh": 6
+    },
+    {
+      "name": "Left_wing",
+      "mesh": 7
+    },
+    {
+      "name": "Left_wing_inlay",
+      "mesh": 8
+    },
+    {
+      "name": "Right_side_panel_front",
+      "mesh": 9
+    },
+    {
+      "name": "Right_side_panel_rear",
+      "mesh": 10
+    },
+    {
+      "name": "Right_wing",
+      "mesh": 11
+    },
+    {
+      "name": "Right_wing_inlay",
+      "mesh": 12
+    },
+    {
+      "name": "Neck_upper_pivot",
+      "mesh": 13
+    },
+    {
+      "name": "Pelvis",
+      "mesh": 14
+    },
+    {
+      "name": "L_HipRoll",
+      "mesh": 15
+    },
+    {
+      "name": "L_Thigh",
+      "mesh": 16
+    },
+    {
+      "name": "L_Shin",
+      "mesh": 17
+    },
+    {
+      "name": "L_Foot",
+      "mesh": 18
+    },
+    {
+      "name": "L_Roll_XL330_case",
+      "mesh": 19
+    },
+    {
+      "name": "L_Roll_retainer",
+      "mesh": 20
+    },
+    {
+      "name": "L_Roll_output",
+      "mesh": 21
+    },
+    {
+      "name": "L_Roll_idler",
+      "mesh": 22
+    },
+    {
+      "name": "L_HipPitch_XL330_case",
+      "mesh": 23
+    },
+    {
+      "name": "L_HipPitch_retainer",
+      "mesh": 24
+    },
+    {
+      "name": "L_Hip_socket_cover",
+      "mesh": 25
+    },
+    {
+      "name": "L_Knee_XL330_case",
+      "mesh": 26
+    },
+    {
+      "name": "L_Knee_retainer",
+      "mesh": 27
+    },
+    {
+      "name": "L_HipPitch_output",
+      "mesh": 28
+    },
+    {
+      "name": "L_HipPitch_idler",
+      "mesh": 29
+    },
+    {
+      "name": "L_Knee_output",
+      "mesh": 30
+    },
+    {
+      "name": "L_Knee_idler",
+      "mesh": 31
+    },
+    {
+      "name": "L_Ankle_XL330_case",
+      "mesh": 32
+    },
+    {
+      "name": "L_Ankle_retainer",
+      "mesh": 33
+    },
+    {
+      "name": "L_Ankle_output",
+      "mesh": 34
+    },
+    {
+      "name": "L_Ankle_idler",
+      "mesh": 35
+    },
+    {
+      "name": "R_HipRoll",
+      "mesh": 36
+    },
+    {
+      "name": "R_Thigh",
+      "mesh": 37
+    },
+    {
+      "name": "R_Shin",
+      "mesh": 38
+    },
+    {
+      "name": "R_Foot",
+      "mesh": 39
+    },
+    {
+      "name": "R_Roll_XL330_case",
+      "mesh": 40
+    },
+    {
+      "name": "R_Roll_retainer",
+      "mesh": 41
+    },
+    {
+      "name": "R_Roll_output",
+      "mesh": 42
+    },
+    {
+      "name": "R_Roll_idler",
+      "mesh": 43
+    },
+    {
+      "name": "R_HipPitch_XL330_case",
+      "mesh": 44
+    },
+    {
+      "name": "R_HipPitch_retainer",
+      "mesh": 45
+    },
+    {
+      "name": "R_Hip_socket_cover",
+      "mesh": 46
+    },
+    {
+      "name": "R_Knee_XL330_case",
+      "mesh": 47
+    },
+    {
+      "name": "R_Knee_retainer",
+      "mesh": 48
+    },
+    {
+      "name": "R_HipPitch_output",
+      "mesh": 49
+    },
+    {
+      "name": "R_HipPitch_idler",
+      "mesh": 50
+    },
+    {
+      "name": "R_Knee_output",
+      "mesh": 51
+    },
+    {
+      "name": "R_Knee_idler",
+      "mesh": 52
+    },
+    {
+      "name": "R_Ankle_XL330_case",
+      "mesh": 53
+    },
+    {
+      "name": "R_Ankle_retainer",
+      "mesh": 54
+    },
+    {
+      "name": "R_Ankle_output",
+      "mesh": 55
+    },
+    {
+      "name": "R_Ankle_idler",
+      "mesh": 56
+    }
+  ],
+  "meshes": [
+    {
+      "name": "Torso"
+    },
+    {
+      "name": "Head"
+    },
+    {
+      "name": "Face_panel"
+    },
+    {
+      "name": "Left_eye"
+    },
+    {
+      "name": "Right_eye"
+    },
+    {
+      "name": "Left_side_panel_front"
+    },
+    {
+      "name": "Left_side_panel_rear"
+    },
+    {
+      "name": "Left_wing"
+    },
+    {
+      "name": "Left_wing_inlay"
+    },
+    {
+      "name": "Right_side_panel_front"
+    },
+    {
+      "name": "Right_side_panel_rear"
+    },
+    {
+      "name": "Right_wing"
+    },
+    {
+      "name": "Right_wing_inlay"
+    },
+    {
+      "name": "Neck_upper_pivot"
+    },
+    {
+      "name": "Pelvis"
+    },
+    {
+      "name": "L_HipRoll"
+    },
+    {
+      "name": "L_Thigh"
+    },
+    {
+      "name": "L_Shin"
+    },
+    {
+      "name": "L_Foot"
+    },
+    {
+      "name": "L_Roll_XL330_case"
+    },
+    {
+      "name": "L_Roll_retainer"
+    },
+    {
+      "name": "L_Roll_output"
+    },
+    {
+      "name": "L_Roll_idler"
+    },
+    {
+      "name": "L_HipPitch_XL330_case"
+    },
+    {
+      "name": "L_HipPitch_retainer"
+    },
+    {
+      "name": "L_Hip_socket_cover"
+    },
+    {
+      "name": "L_Knee_XL330_case"
+    },
+    {
+      "name": "L_Knee_retainer"
+    },
+    {
+      "name": "L_HipPitch_output"
+    },
+    {
+      "name": "L_HipPitch_idler"
+    },
+    {
+      "name": "L_Knee_output"
+    },
+    {
+      "name": "L_Knee_idler"
+    },
+    {
+      "name": "L_Ankle_XL330_case"
+    },
+    {
+      "name": "L_Ankle_retainer"
+    },
+    {
+      "name": "L_Ankle_output"
+    },
+    {
+      "name": "L_Ankle_idler"
+    },
+    {
+      "name": "R_HipRoll"
+    },
+    {
+      "name": "R_Thigh"
+    },
+    {
+      "name": "R_Shin"
+    },
+    {
+      "name": "R_Foot"
+    },
+    {
+      "name": "R_Roll_XL330_case"
+    },
+    {
+      "name": "R_Roll_retainer"
+    },
+    {
+      "name": "R_Roll_output"
+    },
+    {
+      "name": "R_Roll_idler"
+    },
+    {
+      "name": "R_HipPitch_XL330_case"
+    },
+    {
+      "name": "R_HipPitch_retainer"
+    },
+    {
+      "name": "R_Hip_socket_cover"
+    },
+    {
+      "name": "R_Knee_XL330_case"
+    },
+    {
+      "name": "R_Knee_retainer"
+    },
+    {
+      "name": "R_HipPitch_output"
+    },
+    {
+      "name": "R_HipPitch_idler"
+    },
+    {
+      "name": "R_Knee_output"
+    },
+    {
+      "name": "R_Knee_idler"
+    },
+    {
+      "name": "R_Ankle_XL330_case"
+    },
+    {
+      "name": "R_Ankle_retainer"
+    },
+    {
+      "name": "R_Ankle_output"
+    },
+    {
+      "name": "R_Ankle_idler"
+    }
+  ]
+}

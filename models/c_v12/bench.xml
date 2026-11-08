@@ -1,0 +1,210 @@
+<?xml version='1.0' encoding='utf-8'?>
+<mujoco model="Chicken C v12 — pinned bench (contacts off)">
+  <compiler angle="degree" autolimits="true" meshdir="meshes" inertiafromgeom="false" alignfree="false" />
+  <option timestep="0.002" integrator="implicitfast" gravity="0 0 0">
+    <flag contact="disable" />
+  </option>
+  <visual>
+    <global offwidth="1200" offheight="900" />
+    <map znear="0.01" />
+  </visual>
+  <statistic center="0 -0.015 0.09" extent="0.25" />
+  <default>
+    <joint damping="0.01" armature="0.00001" />
+    <geom contype="0" conaffinity="0" group="2" />
+  </default>
+  <asset>
+    <mesh name="Face_panel" file="Face_panel.stl" />
+    <mesh name="Head" file="Head.stl" />
+    <mesh name="L_Ankle_XL330_case" file="L_Ankle_XL330_case.stl" />
+    <mesh name="L_Ankle_idler" file="L_Ankle_idler.stl" />
+    <mesh name="L_Ankle_output" file="L_Ankle_output.stl" />
+    <mesh name="L_Ankle_retainer" file="L_Ankle_retainer.stl" />
+    <mesh name="L_Foot" file="L_Foot.stl" />
+    <mesh name="L_HipPitch_XL330_case" file="L_HipPitch_XL330_case.stl" />
+    <mesh name="L_HipPitch_idler" file="L_HipPitch_idler.stl" />
+    <mesh name="L_HipPitch_output" file="L_HipPitch_output.stl" />
+    <mesh name="L_HipPitch_retainer" file="L_HipPitch_retainer.stl" />
+    <mesh name="L_HipRoll" file="L_HipRoll.stl" />
+    <mesh name="L_Hip_socket_cover" file="L_Hip_socket_cover.stl" />
+    <mesh name="L_Knee_XL330_case" file="L_Knee_XL330_case.stl" />
+    <mesh name="L_Knee_idler" file="L_Knee_idler.stl" />
+    <mesh name="L_Knee_output" file="L_Knee_output.stl" />
+    <mesh name="L_Knee_retainer" file="L_Knee_retainer.stl" />
+    <mesh name="L_Roll_XL330_case" file="L_Roll_XL330_case.stl" />
+    <mesh name="L_Roll_idler" file="L_Roll_idler.stl" />
+    <mesh name="L_Roll_output" file="L_Roll_output.stl" />
+    <mesh name="L_Roll_retainer" file="L_Roll_retainer.stl" />
+    <mesh name="L_Shin" file="L_Shin.stl" />
+    <mesh name="L_Thigh" file="L_Thigh.stl" />
+    <mesh name="Left_eye" file="Left_eye.stl" />
+    <mesh name="Left_side_panel_front" file="Left_side_panel_front.stl" />
+    <mesh name="Left_side_panel_rear" file="Left_side_panel_rear.stl" />
+    <mesh name="Left_wing" file="Left_wing.stl" />
+    <mesh name="Left_wing_inlay" file="Left_wing_inlay.stl" />
+    <mesh name="Neck_upper_pivot" file="Neck_upper_pivot.stl" />
+    <mesh name="Pelvis" file="Pelvis.stl" />
+    <mesh name="R_Ankle_XL330_case" file="R_Ankle_XL330_case.stl" />
+    <mesh name="R_Ankle_idler" file="R_Ankle_idler.stl" />
+    <mesh name="R_Ankle_output" file="R_Ankle_output.stl" />
+    <mesh name="R_Ankle_retainer" file="R_Ankle_retainer.stl" />
+    <mesh name="R_Foot" file="R_Foot.stl" />
+    <mesh name="R_HipPitch_XL330_case" file="R_HipPitch_XL330_case.stl" />
+    <mesh name="R_HipPitch_idler" file="R_HipPitch_idler.stl" />
+    <mesh name="R_HipPitch_output" file="R_HipPitch_output.stl" />
+    <mesh name="R_HipPitch_retainer" file="R_HipPitch_retainer.stl" />
+    <mesh name="R_HipRoll" file="R_HipRoll.stl" />
+    <mesh name="R_Hip_socket_cover" file="R_Hip_socket_cover.stl" />
+    <mesh name="R_Knee_XL330_case" file="R_Knee_XL330_case.stl" />
+    <mesh name="R_Knee_idler" file="R_Knee_idler.stl" />
+    <mesh name="R_Knee_output" file="R_Knee_output.stl" />
+    <mesh name="R_Knee_retainer" file="R_Knee_retainer.stl" />
+    <mesh name="R_Roll_XL330_case" file="R_Roll_XL330_case.stl" />
+    <mesh name="R_Roll_idler" file="R_Roll_idler.stl" />
+    <mesh name="R_Roll_output" file="R_Roll_output.stl" />
+    <mesh name="R_Roll_retainer" file="R_Roll_retainer.stl" />
+    <mesh name="R_Shin" file="R_Shin.stl" />
+    <mesh name="R_Thigh" file="R_Thigh.stl" />
+    <mesh name="Right_eye" file="Right_eye.stl" />
+    <mesh name="Right_side_panel_front" file="Right_side_panel_front.stl" />
+    <mesh name="Right_side_panel_rear" file="Right_side_panel_rear.stl" />
+    <mesh name="Right_wing" file="Right_wing.stl" />
+    <mesh name="Right_wing_inlay" file="Right_wing_inlay.stl" />
+    <mesh name="Torso" file="Torso.stl" />
+  </asset>
+  <worldbody>
+    <light pos="0 -0.4 0.7" dir="0 0 -1" diffuse="0.8 0.8 0.8" />
+    <light pos="0.3 0.2 0.4" dir="-1 -1 -1" diffuse="0.5 0.5 0.5" />
+    <geom name="floor" type="plane" size="0.6 0.6 0.02" rgba="0.22 0.25 0.3 1" group="0" contype="2" conaffinity="1" condim="3" friction="0.8 0.005 0.0001" />
+    <body name="Torso" pos="0 0 0.0990723554257">
+      <body name="L_HipRoll" pos="-0.012 -0.008 0" euler="0 0 0">
+        <joint name="left_hip_roll" axis="0 1 0" range="-15 45" ref="0" />
+        <body name="L_Thigh" pos="-0.041 0 0" euler="-40 0 0">
+          <joint name="left_hip_pitch" axis="1 0 0" range="-65 45" ref="-40" />
+          <body name="L_Shin" pos="0 0 -0.048" euler="80 0 0">
+            <joint name="left_knee" axis="1 0 0" range="0 150" ref="80" />
+            <body name="L_Foot" pos="0 0 -0.05" euler="-40 0 0">
+              <joint name="left_ankle_pitch" axis="1 0 0" range="-45 45" ref="-40" />
+              <site name="left_sole" pos="0 -0.01 -0.024" size="0.002" rgba="0.2 0.8 0.3 1" group="3" />
+              <inertial mass="0.014242326823031528" pos="7.16180676492e-05 -0.0108424928212 -0.00668970628431" fullinertia="5.61165418069e-06 3.16925379127e-06 6.1691620045e-06 -1.10593330497e-08 -6.87083489446e-09 -8.65217934445e-08" />
+              <geom name="L_Ankle_idler" type="mesh" mesh="L_Ankle_idler" rgba="0.16862745098 0.219607843137 0.258823529412 1" />
+              <geom name="L_Ankle_output" type="mesh" mesh="L_Ankle_output" rgba="0.0941176470588 0.117647058824 0.145098039216 1" />
+              <geom name="L_Foot" type="mesh" mesh="L_Foot" rgba="0.854901960784 0.258823529412 0.0470588235294 1" />
+              <geom name="collision_l_foot_toe_a" type="box" group="3" contype="1" conaffinity="2" condim="3" friction="0.8 0.005 0.0001" solref="0.01 1" solimp="0.9 0.95 0.001" rgba="0.1 0.8 1 0.3" pos="-0.00999999915063 -0.0117499989354 -0.0215" size="0.00899999977648 0.0307499989867 0.0025" />
+              <geom name="collision_l_foot_toe_b" type="box" group="3" contype="1" conaffinity="2" condim="3" friction="0.8 0.005 0.0001" solref="0.01 1" solimp="0.9 0.95 0.001" rgba="0.1 0.8 1 0.3" pos="0.0100000004023 -0.0117499989354 -0.0215" size="0.00899999977648 0.0307499989867 0.0025" />
+              <geom name="collision_l_foot_ankle" type="box" group="3" contype="1" conaffinity="2" condim="3" friction="0.8 0.005 0.0001" solref="0.01 1" solimp="0.9 0.95 0.001" rgba="0.1 0.8 1 0.3" pos="0 0 -0.007" size="0.014 0.012 0.012" />
+            </body>
+            <inertial mass="0.028953978485553287" pos="0.000342851803123 -0.0070034642896 -0.0393535918348" fullinertia="1.31190402148e-05 1.13821026974e-05 5.56153472233e-06 -6.74958261972e-09 3.17910322397e-08 -2.36569369462e-07" />
+            <geom name="L_Ankle_XL330_case" type="mesh" mesh="L_Ankle_XL330_case" rgba="0.0235294117647 0.0352941176471 0.0509803921569 1" />
+            <geom name="L_Ankle_retainer" type="mesh" mesh="L_Ankle_retainer" rgba="0.58431372549 0.552941176471 0.486274509804 1" />
+            <geom name="L_Knee_idler" type="mesh" mesh="L_Knee_idler" rgba="0.16862745098 0.219607843137 0.258823529412 1" />
+            <geom name="L_Knee_output" type="mesh" mesh="L_Knee_output" rgba="0.0941176470588 0.117647058824 0.145098039216 1" />
+            <geom name="L_Shin" type="mesh" mesh="L_Shin" rgba="0.686274509804 0.63137254902 0.525490196078 1" />
+            <geom name="collision_l_shin" type="box" group="3" contype="1" conaffinity="2" condim="3" friction="0.8 0.005 0.0001" solref="0.01 1" solimp="0.9 0.95 0.001" rgba="0.1 0.8 1 0.3" pos="6.25848768643e-10 -0.00771244681545 -0.0282123858123" size="0.0168999992311 0.0205371470196 0.0362098858967" />
+          </body>
+          <inertial mass="0.029294857832829892" pos="0.000338862335546 -0.000138254758738 -0.0343526888357" fullinertia="9.55393109592e-06 1.01138732776e-05 3.32963992375e-06 -1.37245217545e-09 1.96664625537e-08 2.9577067488e-08" />
+          <geom name="L_HipPitch_idler" type="mesh" mesh="L_HipPitch_idler" rgba="0.16862745098 0.219607843137 0.258823529412 1" />
+          <geom name="L_HipPitch_output" type="mesh" mesh="L_HipPitch_output" rgba="0.0941176470588 0.117647058824 0.145098039216 1" />
+          <geom name="L_Knee_XL330_case" type="mesh" mesh="L_Knee_XL330_case" rgba="0.0235294117647 0.0352941176471 0.0509803921569 1" />
+          <geom name="L_Knee_retainer" type="mesh" mesh="L_Knee_retainer" rgba="0.58431372549 0.552941176471 0.486274509804 1" />
+          <geom name="L_Thigh" type="mesh" mesh="L_Thigh" rgba="0.78431372549 0.729411764706 0.61568627451 1" />
+          <geom name="collision_l_thigh" type="box" group="3" contype="1" conaffinity="2" condim="3" friction="0.8 0.005 0.0001" solref="0.01 1" solimp="0.9 0.95 0.001" rgba="0.1 0.8 1 0.3" pos="6.25848768643e-10 -0.000401939019228 -0.0265012507026" size="0.0168999992311 0.014957483667 0.0344987500679" />
+        </body>
+        <inertial mass="0.024052731511743385" pos="-0.0365197567882 0.00679387553879 0.000120489660051" fullinertia="3.63126778267e-06 7.13064574394e-06 8.98723623732e-06 5.14182451823e-07 -7.43739532211e-08 6.47782154427e-09" />
+        <geom name="L_HipPitch_XL330_case" type="mesh" mesh="L_HipPitch_XL330_case" rgba="0.0235294117647 0.0352941176471 0.0509803921569 1" />
+        <geom name="L_HipPitch_retainer" type="mesh" mesh="L_HipPitch_retainer" rgba="0.105882352941 0.329411764706 0.666666666667 1" />
+        <geom name="L_HipRoll" type="mesh" mesh="L_HipRoll" rgba="0.0588235294118 0.0823529411765 0.105882352941 1" />
+        <geom name="L_Hip_socket_cover" type="mesh" mesh="L_Hip_socket_cover" rgba="0.78431372549 0.729411764706 0.61568627451 1" />
+        <geom name="L_Roll_idler" type="mesh" mesh="L_Roll_idler" rgba="0.16862745098 0.219607843137 0.258823529412 1" />
+        <geom name="L_Roll_output" type="mesh" mesh="L_Roll_output" rgba="0.0941176470588 0.117647058824 0.145098039216 1" />
+        <geom name="collision_l_hiproll" type="box" group="3" contype="1" conaffinity="2" condim="3" friction="0.8 0.005 0.0001" solref="0.01 1" solimp="0.9 0.95 0.001" rgba="0.1 0.8 1 0.3" pos="-0.0255499997754 0.00749999991804 3.51365381235e-10" size="0.0350499998312 0.0249999994412 0.0140000022948" />
+      </body>
+      <body name="R_HipRoll" pos="0.012 -0.008 0" euler="0 0 0">
+        <joint name="right_hip_roll" axis="0 1 0" range="-45 15" ref="0" />
+        <body name="R_Thigh" pos="0.041 0 0" euler="-40 0 0">
+          <joint name="right_hip_pitch" axis="1 0 0" range="-65 45" ref="-40" />
+          <body name="R_Shin" pos="0 0 -0.048" euler="80 0 0">
+            <joint name="right_knee" axis="1 0 0" range="0 150" ref="80" />
+            <body name="R_Foot" pos="0 0 -0.05" euler="-40 0 0">
+              <joint name="right_ankle_pitch" axis="1 0 0" range="-45 45" ref="-40" />
+              <site name="right_sole" pos="0 -0.01 -0.024" size="0.002" rgba="0.2 0.8 0.3 1" group="3" />
+              <inertial mass="0.014242326823031528" pos="7.16169598123e-05 -0.0108424928212 -0.00668970628431" fullinertia="5.61165418069e-06 3.16925379531e-06 6.16916200854e-06 -1.1059355265e-08 -6.87084861015e-09 -8.65217934445e-08" />
+              <geom name="R_Ankle_idler" type="mesh" mesh="R_Ankle_idler" rgba="0.16862745098 0.219607843137 0.258823529412 1" />
+              <geom name="R_Ankle_output" type="mesh" mesh="R_Ankle_output" rgba="0.0941176470588 0.117647058824 0.145098039216 1" />
+              <geom name="R_Foot" type="mesh" mesh="R_Foot" rgba="0.854901960784 0.258823529412 0.0470588235294 1" />
+              <geom name="collision_r_foot_toe_a" type="box" group="3" contype="1" conaffinity="2" condim="3" friction="0.8 0.005 0.0001" solref="0.01 1" solimp="0.9 0.95 0.001" rgba="0.1 0.8 1 0.3" pos="-0.0100000004023 -0.0117499989354 -0.0215" size="0.00899999977648 0.0307499989867 0.0025" />
+              <geom name="collision_r_foot_toe_b" type="box" group="3" contype="1" conaffinity="2" condim="3" friction="0.8 0.005 0.0001" solref="0.01 1" solimp="0.9 0.95 0.001" rgba="0.1 0.8 1 0.3" pos="0.00999999915063 -0.0117499989354 -0.0215" size="0.00899999977648 0.0307499989867 0.0025" />
+              <geom name="collision_r_foot_ankle" type="box" group="3" contype="1" conaffinity="2" condim="3" friction="0.8 0.005 0.0001" solref="0.01 1" solimp="0.9 0.95 0.001" rgba="0.1 0.8 1 0.3" pos="0 0 -0.007" size="0.014 0.012 0.012" />
+            </body>
+            <inertial mass="0.028953978485553287" pos="0.000342848429672 -0.0070034642896 -0.0393535918348" fullinertia="1.31190402148e-05 1.13821027795e-05 5.56153480437e-06 -6.74959977705e-09 3.17904385833e-08 -2.36569369462e-07" />
+            <geom name="R_Ankle_XL330_case" type="mesh" mesh="R_Ankle_XL330_case" rgba="0.0235294117647 0.0352941176471 0.0509803921569 1" />
+            <geom name="R_Ankle_retainer" type="mesh" mesh="R_Ankle_retainer" rgba="0.58431372549 0.552941176471 0.486274509804 1" />
+            <geom name="R_Knee_idler" type="mesh" mesh="R_Knee_idler" rgba="0.16862745098 0.219607843137 0.258823529412 1" />
+            <geom name="R_Knee_output" type="mesh" mesh="R_Knee_output" rgba="0.0941176470588 0.117647058824 0.145098039216 1" />
+            <geom name="R_Shin" type="mesh" mesh="R_Shin" rgba="0.686274509804 0.63137254902 0.525490196078 1" />
+            <geom name="collision_r_shin" type="box" group="3" contype="1" conaffinity="2" condim="3" friction="0.8 0.005 0.0001" solref="0.01 1" solimp="0.9 0.95 0.001" rgba="0.1 0.8 1 0.3" pos="-6.25848768643e-10 -0.00771244681545 -0.0282123858123" size="0.0168999992311 0.0205371470196 0.0362098858967" />
+          </body>
+          <inertial mass="0.029294857832829892" pos="0.000338858986783 -0.000138254758738 -0.0343526888357" fullinertia="9.55393109592e-06 1.01138733591e-05 3.32964000531e-06 -1.372443682e-09 1.96660019147e-08 2.9577067488e-08" />
+          <geom name="R_HipPitch_idler" type="mesh" mesh="R_HipPitch_idler" rgba="0.16862745098 0.219607843137 0.258823529412 1" />
+          <geom name="R_HipPitch_output" type="mesh" mesh="R_HipPitch_output" rgba="0.0941176470588 0.117647058824 0.145098039216 1" />
+          <geom name="R_Knee_XL330_case" type="mesh" mesh="R_Knee_XL330_case" rgba="0.0235294117647 0.0352941176471 0.0509803921569 1" />
+          <geom name="R_Knee_retainer" type="mesh" mesh="R_Knee_retainer" rgba="0.58431372549 0.552941176471 0.486274509804 1" />
+          <geom name="R_Thigh" type="mesh" mesh="R_Thigh" rgba="0.78431372549 0.729411764706 0.61568627451 1" />
+          <geom name="collision_r_thigh" type="box" group="3" contype="1" conaffinity="2" condim="3" friction="0.8 0.005 0.0001" solref="0.01 1" solimp="0.9 0.95 0.001" rgba="0.1 0.8 1 0.3" pos="-6.25848768643e-10 -0.000401939019228 -0.0265012507026" size="0.0168999992311 0.014957483667 0.0344987500679" />
+        </body>
+        <inertial mass="0.02401958978093012" pos="0.0363792396967 0.00678500474322 0.00012299808501" fullinertia="3.63000592616e-06 7.14987592236e-06 9.00694997986e-06 -5.16633285436e-07 7.54015572826e-08 6.57785137838e-09" />
+        <geom name="R_HipPitch_XL330_case" type="mesh" mesh="R_HipPitch_XL330_case" rgba="0.0235294117647 0.0352941176471 0.0509803921569 1" />
+        <geom name="R_HipPitch_retainer" type="mesh" mesh="R_HipPitch_retainer" rgba="0.58431372549 0.552941176471 0.486274509804 1" />
+        <geom name="R_HipRoll" type="mesh" mesh="R_HipRoll" rgba="0.0588235294118 0.0823529411765 0.105882352941 1" />
+        <geom name="R_Hip_socket_cover" type="mesh" mesh="R_Hip_socket_cover" rgba="0.78431372549 0.729411764706 0.61568627451 1" />
+        <geom name="R_Roll_idler" type="mesh" mesh="R_Roll_idler" rgba="0.16862745098 0.219607843137 0.258823529412 1" />
+        <geom name="R_Roll_output" type="mesh" mesh="R_Roll_output" rgba="0.0941176470588 0.117647058824 0.145098039216 1" />
+        <geom name="collision_r_hiproll" type="box" group="3" contype="1" conaffinity="2" condim="3" friction="0.8 0.005 0.0001" solref="0.01 1" solimp="0.9 0.95 0.001" rgba="0.1 0.8 1 0.3" pos="0.0255499997754 0.00749999991804 3.51365381235e-10" size="0.0350499998312 0.0249999994412 0.0140000022948" />
+      </body>
+      <inertial mass="0.3080813028452469" pos="2.75237582224e-06 -0.0095221343057 0.0153636056998" fullinertia="0.00105851863712 0.000406626340613 0.00111637436047 9.84972972001e-08 -2.81914986139e-08 0.000132104361269" />
+      <geom name="Face_panel" type="mesh" mesh="Face_panel" rgba="0.0196078431373 0.0352941176471 0.0470588235294 1" />
+      <geom name="Head" type="mesh" mesh="Head" rgba="0.854901960784 0.78431372549 0.639215686275 1" />
+      <geom name="L_Roll_XL330_case" type="mesh" mesh="L_Roll_XL330_case" rgba="0.0235294117647 0.0352941176471 0.0509803921569 1" />
+      <geom name="L_Roll_retainer" type="mesh" mesh="L_Roll_retainer" rgba="0.58431372549 0.552941176471 0.486274509804 1" />
+      <geom name="Left_eye" type="mesh" mesh="Left_eye" rgba="0.188235294118 0.658823529412 0.8 1" />
+      <geom name="Left_side_panel_front" type="mesh" mesh="Left_side_panel_front" rgba="0.792156862745 0.729411764706 0.596078431373 1" />
+      <geom name="Left_side_panel_rear" type="mesh" mesh="Left_side_panel_rear" rgba="0.792156862745 0.729411764706 0.596078431373 1" />
+      <geom name="Left_wing" type="mesh" mesh="Left_wing" rgba="0.854901960784 0.78431372549 0.639215686275 1" />
+      <geom name="Left_wing_inlay" type="mesh" mesh="Left_wing_inlay" rgba="0.862745098039 0.254901960784 0.0313725490196 1" />
+      <geom name="Neck_upper_pivot" type="mesh" mesh="Neck_upper_pivot" rgba="0.0352941176471 0.0509803921569 0.0666666666667 1" />
+      <geom name="Pelvis" type="mesh" mesh="Pelvis" rgba="0.0588235294118 0.0823529411765 0.105882352941 1" />
+      <geom name="R_Roll_XL330_case" type="mesh" mesh="R_Roll_XL330_case" rgba="0.0235294117647 0.0352941176471 0.0509803921569 1" />
+      <geom name="R_Roll_retainer" type="mesh" mesh="R_Roll_retainer" rgba="0.58431372549 0.552941176471 0.486274509804 1" />
+      <geom name="Right_eye" type="mesh" mesh="Right_eye" rgba="0.188235294118 0.658823529412 0.8 1" />
+      <geom name="Right_side_panel_front" type="mesh" mesh="Right_side_panel_front" rgba="0.792156862745 0.729411764706 0.596078431373 1" />
+      <geom name="Right_side_panel_rear" type="mesh" mesh="Right_side_panel_rear" rgba="0.792156862745 0.729411764706 0.596078431373 1" />
+      <geom name="Right_wing" type="mesh" mesh="Right_wing" rgba="0.854901960784 0.78431372549 0.639215686275 1" />
+      <geom name="Right_wing_inlay" type="mesh" mesh="Right_wing_inlay" rgba="0.862745098039 0.254901960784 0.0313725490196 1" />
+      <geom name="Torso" type="mesh" mesh="Torso" rgba="0.854901960784 0.78431372549 0.639215686275 1" />
+      <geom name="collision_torso" type="ellipsoid" group="3" contype="1" conaffinity="2" condim="3" friction="0.8 0.005 0.0001" solref="0.01 1" solimp="0.9 0.95 0.001" rgba="0.1 0.8 1 0.3" pos="0 -0.00459810718894 0.0109638947782" size="0.0329999998212 0.0811766199768 0.0383008755744" />
+      <geom name="collision_head" type="box" group="3" contype="1" conaffinity="2" condim="3" friction="0.8 0.005 0.0001" solref="0.01 1" solimp="0.9 0.95 0.001" rgba="0.1 0.8 1 0.3" pos="0 -0.103500001132 0.0580000024077" size="0.0354188382626 0.0223145857453 0.019752047956" />
+      <geom name="collision_left_side_panel_front" type="ellipsoid" group="3" contype="1" conaffinity="2" condim="3" friction="0.8 0.005 0.0001" solref="0.01 1" solimp="0.9 0.95 0.001" rgba="0.1 0.8 1 0.3" pos="-0.0458967033774 -0.0511499987915 0.00677267124623" size="0.0118967015296 0.0248499987647 0.0323761031032" />
+      <geom name="collision_left_side_panel_rear" type="ellipsoid" group="3" contype="1" conaffinity="2" condim="3" friction="0.8 0.005 0.0001" solref="0.01 1" solimp="0.9 0.95 0.001" rgba="0.1 0.8 1 0.3" pos="-0.0458967033774 0.0509392563254 0.00559328159064" size="0.0118967015296 0.0256392564625 0.0315195471048" />
+      <geom name="collision_left_wing" type="ellipsoid" group="3" contype="1" conaffinity="2" condim="3" friction="0.8 0.005 0.0001" solref="0.01 1" solimp="0.9 0.95 0.001" rgba="0.1 0.8 1 0.3" pos="-0.0610000025481 0.0515749873593 0.0234880264637" size="0.00700000114739 0.0248400969431 0.0126683562994" />
+      <geom name="collision_right_side_panel_front" type="ellipsoid" group="3" contype="1" conaffinity="2" condim="3" friction="0.8 0.005 0.0001" solref="0.01 1" solimp="0.9 0.95 0.001" rgba="0.1 0.8 1 0.3" pos="0.0458967033774 -0.0511499987915 0.00677267124623" size="0.0118967015296 0.0248499987647 0.0323761031032" />
+      <geom name="collision_right_side_panel_rear" type="ellipsoid" group="3" contype="1" conaffinity="2" condim="3" friction="0.8 0.005 0.0001" solref="0.01 1" solimp="0.9 0.95 0.001" rgba="0.1 0.8 1 0.3" pos="0.0458967033774 0.0509392563254 0.00559328159064" size="0.0118967015296 0.0256392564625 0.0315195471048" />
+      <geom name="collision_right_wing" type="ellipsoid" group="3" contype="1" conaffinity="2" condim="3" friction="0.8 0.005 0.0001" solref="0.01 1" solimp="0.9 0.95 0.001" rgba="0.1 0.8 1 0.3" pos="0.0610000025481 0.0515749873593 0.0234880264637" size="0.00700000114739 0.0248400969431 0.0126683562994" />
+    </body>
+  </worldbody>
+  <actuator>
+    <position name="left_hip_roll" joint="left_hip_roll" kp="1.5" kv="0.035" ctrlrange="-0.261799387799 0.785398163397" forcerange="-0.12 0.12" />
+    <position name="left_hip_pitch" joint="left_hip_pitch" kp="1.5" kv="0.035" ctrlrange="-1.1344640138 0.785398163397" forcerange="-0.12 0.12" />
+    <position name="left_knee" joint="left_knee" kp="1.5" kv="0.035" ctrlrange="0 2.61799387799" forcerange="-0.12 0.12" />
+    <position name="left_ankle_pitch" joint="left_ankle_pitch" kp="1.5" kv="0.035" ctrlrange="-0.785398163397 0.785398163397" forcerange="-0.12 0.12" />
+    <position name="right_hip_roll" joint="right_hip_roll" kp="1.5" kv="0.035" ctrlrange="-0.785398163397 0.261799387799" forcerange="-0.12 0.12" />
+    <position name="right_hip_pitch" joint="right_hip_pitch" kp="1.5" kv="0.035" ctrlrange="-1.1344640138 0.785398163397" forcerange="-0.12 0.12" />
+    <position name="right_knee" joint="right_knee" kp="1.5" kv="0.035" ctrlrange="0 2.61799387799" forcerange="-0.12 0.12" />
+    <position name="right_ankle_pitch" joint="right_ankle_pitch" kp="1.5" kv="0.035" ctrlrange="-0.785398163397 0.785398163397" forcerange="-0.12 0.12" />
+  </actuator>
+  <keyframe>
+    <key name="stand" qpos="0 -0.698131700798 1.3962634016 -0.698131700798 0 -0.698131700798 1.3962634016 -0.698131700798" ctrl="0 -0.698131700798 1.3962634016 -0.698131700798 0 -0.698131700798 1.3962634016 -0.698131700798" />
+    <key name="left_step" qpos="0 -1.1344640138 1.3962634016 -0.261799387799 0 -0.698131700798 1.3962634016 -0.698131700798" ctrl="0 -1.1344640138 1.3962634016 -0.261799387799 0 -0.698131700798 1.3962634016 -0.698131700798" />
+    <key name="deep_tuck" qpos="0 -1.0471975512 2.44346095279 -0.785398163397 0 -1.0471975512 2.44346095279 -0.785398163397" ctrl="0 -1.0471975512 2.44346095279 -0.785398163397 0 -1.0471975512 2.44346095279 -0.785398163397" />
+    <key name="wide" qpos="0.610865238198 -0.698131700798 1.3962634016 -0.698131700798 -0.610865238198 -0.698131700798 1.3962634016 -0.698131700798" ctrl="0.610865238198 -0.698131700798 1.3962634016 -0.698131700798 -0.610865238198 -0.698131700798 1.3962634016 -0.698131700798" />
+  </keyframe>
+</mujoco>

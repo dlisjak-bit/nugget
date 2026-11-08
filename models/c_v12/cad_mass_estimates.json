@@ -1,0 +1,236 @@
+{
+  "totalKg": 0.50113595042075,
+  "selectedMotorMassKg": 0.144,
+  "unselectedHardwareAllowanceKg": 0.12,
+  "printedDensityKgM3": 1240,
+  "rows": [
+    {
+      "name": "Torso + unselected hardware allowance",
+      "massKg": 0.17826909965062576
+    },
+    {
+      "name": "Head",
+      "massKg": 0.022818005253061328
+    },
+    {
+      "name": "Face_panel",
+      "massKg": 0.004369842126674418
+    },
+    {
+      "name": "Left_eye",
+      "massKg": 0.00021863459047917903
+    },
+    {
+      "name": "Right_eye",
+      "massKg": 0.00021863459047917895
+    },
+    {
+      "name": "Left_side_panel_front",
+      "massKg": 0.006727373360367342
+    },
+    {
+      "name": "Left_side_panel_rear",
+      "massKg": 0.013225474903846695
+    },
+    {
+      "name": "Left_wing",
+      "massKg": 0.007931080810264557
+    },
+    {
+      "name": "Left_wing_inlay",
+      "massKg": 0.0003772643085219631
+    },
+    {
+      "name": "Right_side_panel_front",
+      "massKg": 0.006727373360367346
+    },
+    {
+      "name": "Right_side_panel_rear",
+      "massKg": 0.013225474903846693
+    },
+    {
+      "name": "Right_wing",
+      "massKg": 0.007931080810264557
+    },
+    {
+      "name": "Right_wing_inlay",
+      "massKg": 0.0003772643085219629
+    },
+    {
+      "name": "Neck_upper_pivot",
+      "massKg": 0.004202429859348804
+    },
+    {
+      "name": "Pelvis",
+      "massKg": 0.0052256773309426584
+    },
+    {
+      "name": "L_HipRoll",
+      "massKg": 0.003306514640583101
+    },
+    {
+      "name": "L_Thigh",
+      "massKg": 0.010076561494012681
+    },
+    {
+      "name": "L_Shin",
+      "massKg": 0.009735682146736075
+    },
+    {
+      "name": "L_Foot",
+      "massKg": 0.013142326823031528
+    },
+    {
+      "name": "L_Roll_XL330_case",
+      "massKg": 0.0174
+    },
+    {
+      "name": "L_Roll_retainer",
+      "massKg": 0.0007182963388172121
+    },
+    {
+      "name": "L_Roll_output",
+      "massKg": 0.0006
+    },
+    {
+      "name": "L_Roll_idler",
+      "massKg": 0.0005
+    },
+    {
+      "name": "L_HipPitch_XL330_case",
+      "massKg": 0.0174
+    },
+    {
+      "name": "L_HipPitch_retainer",
+      "massKg": 0.000815733205024012
+    },
+    {
+      "name": "L_Hip_socket_cover",
+      "massKg": 0.0014304836661362735
+    },
+    {
+      "name": "L_Knee_XL330_case",
+      "massKg": 0.0174
+    },
+    {
+      "name": "L_Knee_retainer",
+      "massKg": 0.0007182963388172119
+    },
+    {
+      "name": "L_HipPitch_output",
+      "massKg": 0.0006
+    },
+    {
+      "name": "L_HipPitch_idler",
+      "massKg": 0.0005
+    },
+    {
+      "name": "L_Knee_output",
+      "massKg": 0.0006
+    },
+    {
+      "name": "L_Knee_idler",
+      "massKg": 0.0005
+    },
+    {
+      "name": "L_Ankle_XL330_case",
+      "massKg": 0.0174
+    },
+    {
+      "name": "L_Ankle_retainer",
+      "massKg": 0.0007182963388172118
+    },
+    {
+      "name": "L_Ankle_output",
+      "massKg": 0.0006
+    },
+    {
+      "name": "L_Ankle_idler",
+      "massKg": 0.0005
+    },
+    {
+      "name": "R_HipRoll",
+      "massKg": 0.003370809775976636
+    },
+    {
+      "name": "R_Thigh",
+      "massKg": 0.010076561494012681
+    },
+    {
+      "name": "R_Shin",
+      "massKg": 0.009735682146736075
+    },
+    {
+      "name": "R_Foot",
+      "massKg": 0.013142326823031528
+    },
+    {
+      "name": "R_Roll_XL330_case",
+      "massKg": 0.0174
+    },
+    {
+      "name": "R_Roll_retainer",
+      "massKg": 0.0007182963388172121
+    },
+    {
+      "name": "R_Roll_output",
+      "massKg": 0.0006
+    },
+    {
+      "name": "R_Roll_idler",
+      "massKg": 0.0005
+    },
+    {
+      "name": "R_HipPitch_XL330_case",
+      "massKg": 0.0174
+    },
+    {
+      "name": "R_HipPitch_retainer",
+      "massKg": 0.0007182963388172109
+    },
+    {
+      "name": "R_Hip_socket_cover",
+      "massKg": 0.001430483666136273
+    },
+    {
+      "name": "R_Knee_XL330_case",
+      "massKg": 0.0174
+    },
+    {
+      "name": "R_Knee_retainer",
+      "massKg": 0.0007182963388172119
+    },
+    {
+      "name": "R_HipPitch_output",
+      "massKg": 0.0006
+    },
+    {
+      "name": "R_HipPitch_idler",
+      "massKg": 0.0005
+    },
+    {
+      "name": "R_Knee_output",
+      "massKg": 0.0006
+    },
+    {
+      "name": "R_Knee_idler",
+      "massKg": 0.0005
+    },
+    {
+      "name": "R_Ankle_XL330_case",
+      "massKg": 0.0174
+    },
+    {
+      "name": "R_Ankle_retainer",
+      "massKg": 0.0007182963388172118
+    },
+    {
+      "name": "R_Ankle_output",
+      "massKg": 0.0006
+    },
+    {
+      "name": "R_Ankle_idler",
+      "massKg": 0.0005
+    }
+  ]
+}

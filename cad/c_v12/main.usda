@@ -1,0 +1,12 @@
+#usda 1.0
+(
+    defaultPrim = "Model"
+    metersPerUnit = 1
+    upAxis = "Z"
+)
+def GenerativeProcedural "Model"
+{
+    uniform token proceduralSystem = "forgecad"
+    uniform int primvars:forgecad:formatVersion = 1
+    uniform asset primvars:forgecad:entrypoint = @./main.forge.js@
+}
