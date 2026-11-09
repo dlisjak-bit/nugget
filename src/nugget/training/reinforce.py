@@ -16,9 +16,8 @@ from torch.distributions.normal import Normal
 
 import gymnasium as gym
 
-from chicken_bot.envs.gymnasium.stand import NuggetStandEnv
-from chicken_bot.robot import PROJECT_ROOT, JOINTS
-from chicken_bot.poses import POSES
+from nugget.envs.gymnasium.stand import NuggetStandEnv
+from nugget.robot import PROJECT_ROOT, JOINTS
 
 
 class Policy_Network(nn.Module):
@@ -55,16 +54,12 @@ class Policy_Network(nn.Module):
 
         if action_space_dims != len(JOINTS):
             raise ValueError("This policy expects Nugget's eight leg actuators.")
-        self.register_buffer(
-            "standing_angles",
-            torch.tensor(np.deg2rad(POSES["stand"]), dtype=torch.float32),
-        )
         # Zero corrections initially: the mean policy starts by holding stand.
         nn.init.zeros_(self.policy_mean_net[0].weight)
         nn.init.zeros_(self.policy_mean_net[0].bias)
         # Eight trainable noise scales, independent of the observation.
         self.log_std = nn.Parameter(
-            torch.full((action_space_dims,), float(np.log(np.deg2rad(5))))
+            torch.full((action_space_dims,), float(np.log(np.deg2rad(0.5))))
         )
 
     def forward(self, x: torch.Tensor) -> tuple[torch.Tensor, torch.Tensor]:
@@ -80,7 +75,7 @@ class Policy_Network(nn.Module):
         """
 
         shared_features = self.shared_net(x)
-        action_means = self.standing_angles + self.policy_mean_net(shared_features)
+        action_means = torch.pi * torch.tanh(self.policy_mean_net(shared_features))
         action_stddevs = self.log_std.exp().expand_as(action_means)
         return action_means, action_stddevs
 
@@ -94,7 +89,7 @@ class REINFORCE:
             self,
             obs_space_dims: int,
             action_space_dims: int,
-            lr: float = 1e-3,
+            lr: float = 1e-5,
             gamma: float = 0.99,
     ):
         """Initializes the REINFORCE algorithm.
@@ -110,6 +105,7 @@ class REINFORCE:
         self.gamma = gamma
         self.probs = []
         self.rewards = []
+        self.batch_episodes = 0
 
     def sample_action(self, state: np.ndarray) -> np.ndarray:
         """Samples an action from the policy network given the current state.
@@ -129,8 +125,8 @@ class REINFORCE:
         self.probs.append(prob)
         return action
 
-    def update(self):
-        """Updates the policy network using the REINFORCE algorithm."""
+    def finish_episode(self):
+        """Accumulate this episode's gradient without changing the policy."""
         running_g = 0
         gs = []
 
@@ -146,21 +142,28 @@ class REINFORCE:
         # Weight each timestep's joint-action log probability by its return.
         loss = -torch.sum(log_probs * deltas)
 
-        # Update the policy network
-        self.optimizer.zero_grad()
         loss.backward()
-        self.optimizer.step()
+        self.batch_episodes += 1
 
         # Empty / zero out all episode-centric/related variables
         self.probs = []
         self.rewards = []
+
+    def update(self):
+        """Apply the mean gradient across the collected episodes."""
+        for parameter in self.policy_network.parameters():
+            if parameter.grad is not None:
+                parameter.grad.div_(self.batch_episodes)
+        self.optimizer.step()
+        self.optimizer.zero_grad()
+        self.batch_episodes = 0
 
 
 def record_checkpoint_video(agent, video_dir, episode, episode_len, seed):
     """Evaluate mean actions without changing training buffers or RNG state."""
     env = gym.wrappers.RecordVideo(
         NuggetStandEnv(episode_len=episode_len, render_mode="rgb_array"),
-        video_folder=str(video_dir),
+        video_folder=str(video_dir / f"episode_{episode:06d}"),
         episode_trigger=lambda _: True,
         name_prefix=f"episode_{episode:06d}",
     )
@@ -181,8 +184,11 @@ def record_checkpoint_video(agent, video_dir, episode, episode_len, seed):
         network.train(was_training)
 
 
-def train(episodes=5000, seed=1, checkpoint_every=100, episode_len=500, videos=True):
+def train(episodes=5000, seed=1, checkpoint_every=100, episode_len=500, videos=True,
+          batch_size=16, rollouts_per_reset=4):
     """Run one training seed; save metrics and periodic policy checkpoints."""
+    if batch_size < 1 or rollouts_per_reset < 1 or batch_size % rollouts_per_reset:
+        raise ValueError("batch_size must be a positive multiple of rollouts_per_reset")
     torch.manual_seed(seed)
     random.seed(seed)
     np.random.seed(seed)
@@ -202,12 +208,16 @@ def train(episodes=5000, seed=1, checkpoint_every=100, episode_len=500, videos=T
                      + [f"weighted_{n}_mean" for n in component_names]
                      + [f"{n}_mean" for n in diagnostic_names])
     print(f"Saving run to {run_dir}")
+    print(f"Rollout batch: {batch_size // rollouts_per_reset} reset states x "
+          f"{rollouts_per_reset} rollouts = {batch_size} episodes/update")
     try:
         with (run_dir / "metrics.csv").open("w", newline="") as metrics_file:
             writer = csv.writer(metrics_file)
-            writer.writerow(["episode", "reward", "length", "average_reward_50", "termination_reason", "nonfoot_floor_geoms"] + extra_columns)
+            writer.writerow(["episode", "reward", "length", "average_reward_50", "termination_reason", "nonfoot_floor_geoms", "reset_seed"] + extra_columns)
             for episode in range(1, episodes + 1):
-                obs, info = env.reset(seed=seed if episode == 1 else None)
+                # Repeat each random starting state, with fresh policy action noise.
+                reset_seed = seed + (episode - 1) // rollouts_per_reset
+                obs, info = env.reset(seed=reset_seed)
                 done = False
                 component_rows = []
                 while not done:
@@ -224,12 +234,14 @@ def train(episodes=5000, seed=1, checkpoint_every=100, episode_len=500, videos=T
                         )
                     agent.rewards.append(float(reward))
                     done = terminated or truncated
-                agent.update()
+                agent.finish_episode()
+                if episode % batch_size == 0 or episode == episodes:
+                    agent.update()
                 average = float(np.mean(env.return_queue))
                 writer.writerow([episode, float(env.return_queue[-1]),
                                  int(env.length_queue[-1]), average,
                                  info.get("termination_reason") or ("time_limit" if truncated else "unknown"),
-                                 "|".join(info.get("nonfoot_floor_geoms", []))]
+                                 "|".join(info.get("nonfoot_floor_geoms", [])), reset_seed]
                                 + (np.mean(component_rows, axis=0).tolist() if component_rows
                                    else [float("nan")] * len(extra_columns)))
                 metrics_file.flush()
@@ -243,6 +255,8 @@ def train(episodes=5000, seed=1, checkpoint_every=100, episode_len=500, videos=T
                         "obs_dims": env.observation_space.shape[0],
                         "action_dims": env.action_space.shape[0],
                         "seed": seed,
+                        "batch_size": batch_size,
+                        "rollouts_per_reset": rollouts_per_reset,
                         "gamma": agent.gamma,
                         "episode_len": episode_len,
                         "reward_config": env.unwrapped.reward_config,
@@ -261,9 +275,13 @@ if __name__ == "__main__":
     parser.add_argument("--seed", type=int, default=42)
     parser.add_argument("--checkpoint-every", type=int, default=100)
     parser.add_argument("--episode-len", type=int, default=500)
+    parser.add_argument("--batch-size", type=int, default=16, help="episodes averaged per policy update")
+    parser.add_argument("--rollouts-per-reset", type=int, default=4, help="rollouts sharing each randomized starting state")
     parser.add_argument("--no-video", action="store_true", help="Skip checkpoint videos.")
     args = parser.parse_args()
-    if min(args.episodes, args.checkpoint_every, args.episode_len) < 1:
-        parser.error("episode counts and checkpoint interval must be positive")
+    if min(args.episodes, args.checkpoint_every, args.episode_len, args.batch_size, args.rollouts_per_reset) < 1:
+        parser.error("episode counts, checkpoint interval, batch size and rollouts per reset must be positive")
+    if args.batch_size % args.rollouts_per_reset:
+        parser.error("--batch-size must be a multiple of --rollouts-per-reset")
     train(args.episodes, args.seed, args.checkpoint_every, args.episode_len,
-          videos=not args.no_video)
+          videos=not args.no_video, batch_size=args.batch_size, rollouts_per_reset=args.rollouts_per_reset)

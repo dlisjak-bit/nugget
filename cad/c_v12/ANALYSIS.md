@@ -1,4 +1,4 @@
-# Chiken architecture study
+# Nugget architecture study
 
 Use case: compare three cute, compact eight-actuator biped layouts before committing to a manufactured mechanism. See ARCHITECTURES.md for their boundaries, dimensions, loads, mass assumptions and limitations.
 

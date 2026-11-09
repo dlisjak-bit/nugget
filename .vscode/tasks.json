@@ -2,7 +2,7 @@
   "version": "2.0.0",
   "tasks": [
     {
-      "label": "Chicken: physics lab",
+      "label": "Nugget: physics lab",
       "type": "shell",
       "command": "${workspaceFolder}/.venv/bin/python",
       "windows": {"command": "${workspaceFolder}\\.venv\\Scripts\\python.exe"},
@@ -12,7 +12,7 @@
       "presentation": {"reveal": "always", "panel": "dedicated"}
     },
     {
-      "label": "Chicken: pinned joint explorer",
+      "label": "Nugget: pinned joint explorer",
       "type": "shell",
       "command": "${workspaceFolder}/.venv/bin/python",
       "windows": {"command": "${workspaceFolder}\\.venv\\Scripts\\python.exe"},
@@ -21,7 +21,7 @@
       "problemMatcher": []
     },
     {
-      "label": "Chicken: check model",
+      "label": "Nugget: check model",
       "type": "shell",
       "command": "${workspaceFolder}/.venv/bin/python",
       "windows": {"command": "${workspaceFolder}\\.venv\\Scripts\\python.exe"},
@@ -30,7 +30,7 @@
       "problemMatcher": []
     },
     {
-      "label": "Chicken: rebuild CAD visuals",
+      "label": "Nugget: rebuild CAD visuals",
       "type": "shell",
       "command": "${workspaceFolder}/.venv/bin/python",
       "windows": {"command": "${workspaceFolder}\\.venv\\Scripts\\python.exe"},

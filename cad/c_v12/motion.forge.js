@@ -1,5 +1,5 @@
 // Named kinematic motion library. The torso is fixed; these are not motor commands.
-function installChikenMotions(rig,stand) {
+function installNuggetMotions(rig,stand) {
   const state=patch=>({...stand,...patch});
   const poses={
     Stand:{...stand},
@@ -34,4 +34,4 @@ function installChikenMotions(rig,stand) {
   for(const track of tracks) rig.addAnimation(track.name,{duration:track.duration,loop:true,keyframes:track.keyframes});
   return {poses,tracks};
 }
-return {installChikenMotions};
+return {installNuggetMotions};

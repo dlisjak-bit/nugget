@@ -14,8 +14,8 @@ import mujoco
 import mujoco.viewer
 import numpy as np
 
-from chicken_bot.poses import POSES, set_standing_pose
-from chicken_bot.robot import BENCH, JOINTS, SCENE
+from nugget.poses import POSES, set_standing_pose
+from nugget.robot import BENCH, JOINTS, SCENE
 
 
 def robot_com(model, data):
@@ -106,7 +106,7 @@ def main():
         print(f"\n{mode} | {'paused' if paused else 'running'} | gravity {'on' if gravity else 'off'}", flush=True)
         print(setup, flush=True)
 
-    print("\nCHICKEN C v12 — MUJOCO PHYSICS LAB", flush=True)
+    print("\nNUGGET C v12 — MUJOCO PHYSICS LAB", flush=True)
     print("Open the right-hand Control section and move its sliders (radians).", flush=True)
     print("6 Stand   7 Left step   8 Deep tuck   9 Wide", flush=True)
     print("F6 Pose/Servo   Space Pause   F8 Reset   F7 Gravity   J Joint axes", flush=True)

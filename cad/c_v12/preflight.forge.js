@@ -34,7 +34,7 @@ function prepare({d,motor,api,parts,legs,legacy,motion}) {
   fixture.addPose('Left step',{...stand,left_hip_pitch:-65,left_knee:80,left_ankle_pitch:-15});
   fixture.addPose('Right step',{...stand,right_hip_pitch:-65,right_knee:80,right_ankle_pitch:-15});
   fixture.addPose('Deep tuck',{...stand,left_hip_pitch:-60,left_knee:140,left_ankle_pitch:-45,right_hip_pitch:-60,right_knee:140,right_ankle_pitch:-45});
-  const library=motion.installChikenMotions(fixture,stand);
+  const library=motion.installNuggetMotions(fixture,stand);
   const states=[],seen=new Set();
   function add(state) {const key=JSON.stringify(state);if(!seen.has(key)){seen.add(key);states.push(state);}}
   for(const pose of Object.values(library.poses))for(let j=0;j<=4;j++) {

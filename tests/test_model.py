@@ -5,8 +5,8 @@ import unittest
 import mujoco
 import numpy as np
 
-from chicken_bot.robot import JOINTS, MODEL_DIR
-from chicken_bot.viewer import apply_pose, draw_com, robot_com
+from nugget.robot import JOINTS, MODEL_DIR
+from nugget.viewer import apply_pose, draw_com, robot_com
 
 
 class ModelChecks(unittest.TestCase):

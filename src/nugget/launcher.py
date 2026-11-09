@@ -18,12 +18,13 @@ def launch():
     if arguments == ["--check-runtime"]:
         arguments = [
             "-c",
-            "import sys, mujoco, mujoco.viewer, chicken_bot.viewer; "
+            "import sys, mujoco, mujoco.viewer, nugget.viewer; "
             "print('MuJoCo launcher OK:', mujoco.__version__); "
             "print('Python environment:', sys.prefix)",
         ]
     else:
-        arguments = ["-m", "chicken_bot.viewer", *arguments]
+        module = "nugget.evaluation.standing" if "--policy" in arguments else "nugget.viewer"
+        arguments = ["-m", module, *arguments]
 
     # Do not resolve the Python symlink: its venv path must remain argv[0].
     python = sys.executable

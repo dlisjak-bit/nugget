@@ -3,8 +3,8 @@ import numpy as np
 from gymnasium import utils
 from gymnasium.envs.mujoco import MujocoEnv
 from gymnasium.spaces import Box
-from chicken_bot.robot import SCENE
-from chicken_bot.poses import set_standing_pose
+from nugget.robot import SCENE
+from nugget.poses import set_standing_pose
 
 # Trying to implement a custom mujoco environment here for Gymnasium:
 
@@ -56,6 +56,9 @@ class NuggetStandEnv(MujocoEnv, utils.EzPickle):
         self.init_qpos = reference.qpos.copy()
         self.init_qvel = reference.qvel.copy()
         self.standing_ctrl = reference.ctrl.copy()
+        # Actions are joint-angle offsets (radians) from the stable stance.
+        self.action_space = Box((self.action_space.low - self.standing_ctrl).astype(np.float32),
+                                (self.action_space.high - self.standing_ctrl).astype(np.float32), dtype=np.float32)
         self.reward_config = {
             "target_height_m": float(reference.subtree_com[self.torso_id, 2]),
             "height_scale_m": 0.010,
@@ -72,7 +75,7 @@ class NuggetStandEnv(MujocoEnv, utils.EzPickle):
 
 
     def step(self, a):
-        self.do_simulation(a, self.frame_skip)
+        self.do_simulation(self.standing_ctrl + a, self.frame_skip)
         # Refresh position-dependent quantities after the final integration step.
         mujoco.mj_forward(self.model, self.data)
         self.step_number += 1

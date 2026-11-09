@@ -18,8 +18,8 @@ import xml.etree.ElementTree as ET
 import numpy as np
 import trimesh
 
-from chicken_bot.poses import POSES, set_standing_pose
-from chicken_bot.robot import CAD_URL, JOINTS, MODEL_DIR
+from nugget.poses import POSES, set_standing_pose
+from nugget.robot import CAD_URL, JOINTS, MODEL_DIR
 XML_PATH = MODEL_DIR / "scene.xml"
 BENCH_PATH = MODEL_DIR / "bench.xml"
 CAD_SOURCE = MODEL_DIR / "cad.glb.gz"
@@ -175,7 +175,7 @@ def build() -> Path:
         grouped[body].append(part)
         visuals.append(part)
 
-    model = ET.Element("mujoco", model="Chicken C v12 — floating floor-contact lab")
+    model = ET.Element("mujoco", model="Nugget C v12 — floating floor-contact lab")
     ET.SubElement(model, "compiler", angle="degree", autolimits="true", meshdir="meshes", inertiafromgeom="false", alignfree="false")
     ET.SubElement(model, "option", timestep="0.002", integrator="implicitfast", gravity="0 0 -9.81")
     visual = ET.SubElement(model, "visual")
@@ -241,7 +241,7 @@ def build() -> Path:
     tree.write(XML_PATH, encoding="unicode", xml_declaration=True)
     # Keep a separate fixed-base, contact-free model for the first lesson.
     bodies["Torso"].remove(bodies["Torso"].find("freejoint"))
-    model.set("model", "Chicken C v12 — pinned bench (contacts off)")
+    model.set("model", "Nugget C v12 — pinned bench (contacts off)")
     option = model.find("option")
     option.set("gravity", "0 0 0")
     ET.SubElement(option, "flag", contact="disable")

@@ -16,7 +16,7 @@ def set_standing_pose(model, data):
     """Apply shared targets and place a floating robot just above its soles."""
     import mujoco
     import numpy as np
-    from chicken_bot.robot import JOINTS
+    from nugget.robot import JOINTS
 
     for name, angle in zip(JOINTS, np.deg2rad(POSES["stand"])):
         data.qpos[model.joint(name).qposadr[0]] = angle

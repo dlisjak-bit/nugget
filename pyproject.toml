@@ -1,7 +1,7 @@
 [project]
-name = "chicken-bot"
+name = "nugget"
 version = "0.1.0"
-description = "Interactive robotics experiments for Chiken"
+description = "Interactive robotics experiments for Nugget"
 requires-python = ">=3.12,<3.14"
 dependencies = [
   "gymnasium[mujoco]>=1.4.0",
@@ -16,10 +16,10 @@ requires = ["hatchling>=1.27,<2"]
 build-backend = "hatchling.build"
 
 [tool.hatch.build.targets.wheel]
-packages = ["src/chicken_bot"]
+packages = ["src/nugget"]
 
 [project.scripts]
-chicken-viewer = "chicken_bot.launcher:launch"
+nugget-viewer = "nugget.launcher:launch"
 
 [dependency-groups]
 dev = [

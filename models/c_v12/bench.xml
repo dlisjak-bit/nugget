@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='utf-8'?>
-<mujoco model="Chicken C v12 — pinned bench (contacts off)">
+<mujoco model="Nugget C v12 — pinned bench (contacts off)">
   <compiler angle="degree" autolimits="true" meshdir="meshes" inertiafromgeom="false" alignfree="false" />
   <option timestep="0.002" integrator="implicitfast" gravity="0 0 0">
     <flag contact="disable" />

@@ -1,6 +1,6 @@
 """Search symmetric fixed joint targets, without a policy or reward function.
 
-Run: python -m chicken_bot.training.find_balance
+Run: python -m nugget.training.find_balance
 This tests the current approximate model and controller, not hardware stability.
 """
 from __future__ import annotations
@@ -14,8 +14,8 @@ import json
 import mujoco
 import numpy as np
 
-from chicken_bot.poses import POSES
-from chicken_bot.robot import JOINTS, PROJECT_ROOT, SCENE
+from nugget.poses import POSES
+from nugget.robot import JOINTS, PROJECT_ROOT, SCENE
 
 
 def lowest_box_z(model, data, geom):
