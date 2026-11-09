@@ -1,6 +1,8 @@
 # Nugget
 
-<img src="docs/images/proto_render.png" alt="Nugget prototype render" width="480">
+<p align="center">
+  <img src="docs/images/proto_render.png" alt="Nugget prototype render" width="480">
+</p>
 
 ## Quick blog
 
@@ -15,11 +17,13 @@ Brains: TBD.
 
 ### Part 1: Design
 
-- [] TODO
+
 
 ### Part 2: Learning to stand still
 
-<img src="docs/images/standing_sim_viewer.png" alt="Nugget with a standing policy in Mujoco sim" width="480">
+<p align="center">
+  <img src="docs/images/standing_sim_viewer.png" alt="Nugget with a standing policy in Mujoco sim" width="480">
+</p>
 
 Here, I'm going simplest first - using more complex methods only when I truly saturate a simpler method's abilities. 
 
@@ -68,7 +72,9 @@ This reward is evaluated every 0.01 s. Its maximum is 2 per step: reference
 height, upright torso, no horizontal motion and no fall. Episode return is the
 sum of these step rewards. 
 
-- [] TODO: Curriculum learning to add nudges, instead of just environment noise
+
+### Next steps:
+Curriculum learning to add nudges, instead of just environment noise
 
 ## Dev guide
 
