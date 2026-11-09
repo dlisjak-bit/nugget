@@ -1,6 +1,6 @@
 # Nugget
 
-![Nugget prototype render](docs/images/proto_render.png)
+<img src="docs/images/proto_render.png" alt="Nugget prototype render" width="480">
 
 ## Quick blog
 
@@ -15,9 +15,11 @@ Brains: TBD.
 
 ### Part 1: Design
 
-[ ] TODO
+- [] TODO
 
-### Part 2: Learning to stand
+### Part 2: Learning to stand still
+
+<img src="docs/images/standing_sim_viewer.png" alt="Nugget with a standing policy in Mujoco sim" width="480">
 
 Here, I'm going simplest first - using more complex methods only when I truly saturate a simpler method's abilities. 
 
@@ -41,13 +43,15 @@ The environment supports
 
 The "stand still" reward is composed of several terms, so I pass a dict of all of them to the training so I can analyze the rollouts better.
 
-$$
-r_t =
+```math
+\begin{aligned}
+r_t ={} &
 \underbrace{\exp\!\left[-\left(\frac{h_t-h^*}{0.010\,\mathrm{m}}\right)^2\right]}_{\text{height}}
-+ \underbrace{\exp\!\left[-\left(\frac{\theta_t}{20^\circ}\right)^2\right]}_{\text{upright}}
-- \underbrace{0.1\left(\frac{\lVert\mathbf{v}_{\mathrm{COM},xy,t}\rVert}{0.1\,\mathrm{m/s}}\right)^2}_{\text{horizontal motion}}
++ \underbrace{\exp\!\left[-\left(\frac{\theta_t}{20^\circ}\right)^2\right]}_{\text{upright}} \\
+&- \underbrace{0.1\left(\frac{\lVert\mathbf{v}_{\mathrm{COM},xy,t}\rVert}{0.1\,\mathrm{m/s}}\right)^2}_{\text{horizontal motion}}
 - \underbrace{20\,\mathbf{1}_{\mathrm{fall},t}}_{\text{fall penalty}}.
-$$
+\end{aligned}
+```
 
 Here, $h_t$ is the whole-robot center-of-mass (COM) height and $h^*$ is its
 height in the grounded reference standing pose. $\theta_t$ is the angle between
@@ -64,7 +68,7 @@ This reward is evaluated every 0.01 s. Its maximum is 2 per step: reference
 height, upright torso, no horizontal motion and no fall. Episode return is the
 sum of these step rewards. 
 
-[ ] TODO: Curriculum learning to add nudges, instead of just environment noise
+- [] TODO: Curriculum learning to add nudges, instead of just environment noise
 
 ## Dev guide
 
