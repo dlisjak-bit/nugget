@@ -5,7 +5,7 @@ description = "Interactive robotics experiments for Nugget"
 requires-python = ">=3.12,<3.14"
 dependencies = [
   "gymnasium[mujoco]>=1.4.0",
-  "mujoco>=3.3,<5",
+  "mujoco>=4,<5",
   "numpy>=2,<3",
   "torch>=2.15.0",
   "moviepy>=2,<3",

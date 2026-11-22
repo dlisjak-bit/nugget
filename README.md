@@ -15,7 +15,7 @@ Model and physics: MuJoCo.
 Learning Env: Gymnasium (for now). 
 Brains: TBD. 
 
-### Part 1: Design
+### Part 1: Robot design (more on that later)
 
 
 
@@ -25,20 +25,7 @@ Brains: TBD.
   <img src="docs/images/standing_sim_viewer.png" alt="Nugget with a standing policy in Mujoco sim" width="480">
 </p>
 
-Here, I'm going simplest first - using more complex methods only when I truly saturate a simpler method's abilities. 
-
-The first step was hooking up the MuJoCo model to create a custom `MujocoEnv`, `NuggetStandEnv`, that handles every step of the simulation and the reward calculation. The rough workflow is therefore:
-
-```
-reinforce.py: initialize policy NN that predicts joint means and stds
-reinforce.py: initialize stand.py environment
-
-For each rollout:
-NuggetStandEnv -[state, reward, termination flags]-> reinforce.py 
-reinforce.py -[action (joint targets relative to standing pose)] -> NuggetStandEnv
-
-After 16 rollouts: average gradients and update the policy once.
-```
+The first step was hooking up the MuJoCo model to create a custom `MujocoEnv`, `NuggetStandEnv`, that handles every step of the simulation and the reward calculation. 
 
 The environment supports 
 - a noisy reset of the joints and velocities (to prevent overfitting to sim)
@@ -57,24 +44,32 @@ r_t ={} &
 \end{aligned}
 ```
 
-Here, $h_t$ is the whole-robot center-of-mass (COM) height and $h^*$ is its
-height in the grounded reference standing pose. $\theta_t$ is the angle between
-the torso's up axis and world vertical; the implementation uses radians, with
-$20^\circ = \pi/9$. $\mathbf{v}_{\mathrm{COM},xy,t}$ is horizontal COM velocity,
-including motion caused by the leg joints.
-
-The fall indicator is 1 on the terminating step if a torso-attached collision
-geometry touches the floor, COM height falls below 0.055 m, or torso tilt exceeds
-60°. The penalty is applied once; reaching the episode time limit does not incur
-it. Nonfinite observations terminate immediately with reward 0.
+- $h_t$ is the whole-robot center-of-mass (COM) height,  
+- $h^*$ is its height in the grounded reference standing pose. 
+- $\theta_t$ is the angle between the torso's up axis and world vertical; the implementation uses radians, with$20^\circ = \pi/9$.   
+- $\mathbf{v}_{\mathrm{COM},xy,t}$ is horizontal COM velocity, including motion caused by the leg joints.
 
 This reward is evaluated every 0.01 s. Its maximum is 2 per step: reference
 height, upright torso, no horizontal motion and no fall. Episode return is the
 sum of these step rewards. 
 
+I used a simple policy network to predict means and log std for the actions using REINFORCE. Results:
 
-### Next steps:
-Curriculum learning to add nudges, instead of just environment noise
+<p align="center">
+  <img src="docs/images/standing-reinforce-evaluation.png" alt="Standing training curves and held-out 10-second evaluation results" width="50%">
+</p>
+
+Sources: 
+- https://gymnasium.farama.org/tutorials/training_agents/mujoco_reinforce/
+- https://cs229.stanford.edu/notes2020fall/notes2020fall/cs229-notes14.pdf 
+
+### Part 3: Learning how to ACTUALLY stand still (under pushes from the environment)
+
+After learning to control joints enough to fight out random environment noise, it's time for the robot to actually stand still when someone pushes it or something flies into it. REINFORCE was not fit to handle this one. It handles standing still when spawning in to the environment, but even after 5000 episodes, falls under the first push:
+
+<gif of /Users/domen/Documents/projects/toybots/nugget/runs/stand_reinforce/20261122-181159-765763/videos/episode_005000/episode_005000-episode-0.mp4>
+
+#### PPO
 
 ## Dev guide
 
@@ -103,6 +98,7 @@ uv run nugget-viewer --policy runs/stand_reinforce/<run>/checkpoints/episode_000
 
 Checkpoint playback uses mean actions; add `--sample` for training-time policy noise.
 Live playback shows joint angle (blue) and target (orange) plots; **P** toggles them.
+Add `--pushes` to apply the seeded pushes and display their schedule in the viewer.
 Add `--headless` to print one episode's result without opening a window.
 Physics and mass properties are approximate.
 
@@ -115,6 +111,9 @@ uv run python -m nugget.training.reinforce --batch-size 16 --rollouts-per-reset 
 ```
 
 Use `--rollouts-per-reset 1` for a different reset state every episode.
+The trainer batches policy calls across active episodes and steps their physics
+with MuJoCo's native batch simulator. Use `--workers 1` to run the simulator on
+one thread instead of the default four.
 
 ### Repo structure
 

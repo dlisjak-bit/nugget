@@ -23,7 +23,7 @@ dev = [
 requires-dist = [
     { name = "gymnasium", extras = ["mujoco"], specifier = ">=1.4.0" },
     { name = "moviepy", specifier = ">=2,<3" },
-    { name = "mujoco", specifier = ">=3.3,<5" },
+    { name = "mujoco", specifier = ">=4,<5" },
     { name = "numpy", specifier = ">=2,<3" },
     { name = "torch", specifier = ">=2.15.0" },
 ]

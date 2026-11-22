@@ -1,13 +1,14 @@
-# https://gymnasium.farama.org/tutorials/training_agents/mujoco_reinforce/
-# This is a simple test of the stand.py gymnasium environment.
+"""Train a standing policy with REINFORCE and batched MuJoCo physics."""
 
 from __future__ import annotations
 
 import argparse
+from collections import deque
 import csv
-import json
+from dataclasses import dataclass, field
 from datetime import datetime
-import random
+import json
+from pathlib import Path
 
 import numpy as np
 import torch
@@ -15,45 +16,51 @@ import torch.nn as nn
 from torch.distributions.normal import Normal
 
 import gymnasium as gym
+import mujoco
+from mujoco.batch import Batch
 
 from nugget.envs.gymnasium.stand import NuggetStandEnv
 from nugget.robot import PROJECT_ROOT, JOINTS
+
+
+# Set this to a checkpoint from standing without pushes to initialize the policy
+# and train with pushes enabled. None starts a fresh standing run.
+PREVIOUS_WEIGHTS: Path | None = None
+
+COMPONENT_NAMES = ("height", "upright", "velocity", "fall")
+DIAGNOSTIC_NAMES = ("com_height_m", "tilt_rad", "com_speed_xy_m_s", "nonfoot_floor_contact")
+
+
+@dataclass
+class Rollout:
+    reset_seed: int
+    rewards: list[float] = field(default_factory=list)
+    log_probs: list[torch.Tensor] = field(default_factory=list)
+    component_rows: list[list[float]] = field(default_factory=list)
+    info: dict = field(default_factory=dict)
+    truncated: bool = False
 
 
 class Policy_Network(nn.Module):
     """Predict joint targets as corrections around the standing pose."""
 
     def __init__(self, obs_space_dims: int, action_space_dims: int):
-        """Initializes observation-dependent mean corrections and learned joint noise.
-
-        Args:
-            obs_space_dims: Dimension of the observation space
-            action_space_dims: Dimension of the action space
-        """
         super().__init__()
-
-        hidden_space1 = 32 
-        hidden_space2 = 128
-        hidden_space3 = 256
-        hidden_space4 = 128
-
-        self.shared_net = nn.Sequential(
-            nn.Linear(obs_space_dims, hidden_space1),
-            nn.Tanh(),
-            nn.Linear(hidden_space1, hidden_space2),
-            nn.Tanh(),
-            nn.Linear(hidden_space2, hidden_space3),
-            nn.Tanh(),
-            nn.Linear(hidden_space3, hidden_space4),
-            nn.Tanh(),
-        )
-
-        self.policy_mean_net = nn.Sequential(
-            nn.Linear(hidden_space4, action_space_dims),
-        )
-
         if action_space_dims != len(JOINTS):
             raise ValueError("This policy expects Nugget's eight leg actuators.")
+
+        self.shared_net = nn.Sequential(
+            nn.Linear(obs_space_dims, 32),
+            nn.Tanh(),
+            nn.Linear(32, 128),
+            nn.Tanh(),
+            nn.Linear(128, 256),
+            nn.Tanh(),
+            nn.Linear(256, 128),
+            nn.Tanh(),
+        )
+        self.policy_mean_net = nn.Sequential(nn.Linear(128, action_space_dims))
+
         # Zero corrections initially: the mean policy starts by holding stand.
         nn.init.zeros_(self.policy_mean_net[0].weight)
         nn.init.zeros_(self.policy_mean_net[0].bias)
@@ -63,106 +70,108 @@ class Policy_Network(nn.Module):
         )
 
     def forward(self, x: torch.Tensor) -> tuple[torch.Tensor, torch.Tensor]:
-        """Conditioned on the observation, returns the mean and standard deviation
-         of a normal distribution from which an action is sampled from.
-
-        Args:
-            x: Observation from the environment
-
-        Returns:
-            action_means: predicted mean of the normal distribution
-            action_stddevs: predicted standard deviation of the normal distribution
-        """
-
-        shared_features = self.shared_net(x)
-        action_means = torch.pi * torch.tanh(self.policy_mean_net(shared_features))
-        action_stddevs = self.log_std.exp().expand_as(action_means)
-        return action_means, action_stddevs
+        """Return Gaussian means and per-joint exploration scales."""
+        means = torch.pi * torch.tanh(self.policy_mean_net(self.shared_net(x)))
+        return means, self.log_std.exp().expand_as(means)
 
 
 class REINFORCE:
-    """
-    Fun Fact: REINFORCE is an acronym for “ 'RE'ward 'I'ncrement 'N'on-negative 'F'actor times 'O'ffset 'R'einforcement times 'C'haracteristic 'E'ligibility
-    """
+    """Sample joint offsets and update the policy from complete episodes."""
 
     def __init__(
-            self,
-            obs_space_dims: int,
-            action_space_dims: int,
-            lr: float = 1e-5,
-            gamma: float = 0.99,
+        self,
+        obs_space_dims: int,
+        action_space_dims: int,
+        lr: float = 1e-5,
+        gamma: float = 0.99,
     ):
-        """Initializes the REINFORCE algorithm.
-
-        Args:
-            obs_space_dims: Dimension of the observation space
-            action_space_dims: Dimension of the action space
-            lr: Learning rate for the optimizer
-            gamma: Discount factor for future rewards
-        """
         self.policy_network = Policy_Network(obs_space_dims, action_space_dims)
         self.optimizer = torch.optim.AdamW(self.policy_network.parameters(), lr=lr)
         self.gamma = gamma
-        self.probs = []
-        self.rewards = []
-        self.batch_episodes = 0
 
-    def sample_action(self, state: np.ndarray) -> np.ndarray:
-        """Samples an action from the policy network given the current state.
-
-        Args:
-            state: Current state of the environment
-        Returns:
-            action: Sampled action to take in the environment
-        """
-        state = torch.tensor(np.array([state]), dtype=torch.float32)
-        action_means, action_stddevs = self.policy_network(state)
+    def sample_actions(self, observations: np.ndarray) -> tuple[np.ndarray, torch.Tensor]:
+        """Sample actions and joint log probabilities for all active episodes."""
+        states = torch.as_tensor(observations, dtype=torch.float32)
+        action_means, action_stddevs = self.policy_network(states)
         action_distribution = Normal(action_means, action_stddevs)
-        action = action_distribution.sample()
+        actions = action_distribution.sample()
         # Independent joint probabilities multiply, so their log probabilities add.
-        prob = action_distribution.log_prob(action).sum(dim=-1).squeeze(0)
-        action = action.detach().numpy()[0]
-        self.probs.append(prob)
-        return action
+        log_probs = action_distribution.log_prob(actions).sum(dim=-1)
+        return actions.numpy(), log_probs
 
-    def finish_episode(self):
-        """Accumulate this episode's gradient without changing the policy."""
-        running_g = 0
-        gs = []
-
-        # Discounted return (backwards) - [::-1] will return an array in reverse
-        for R in self.rewards[::-1]:
-            running_g = R + self.gamma * running_g
-            gs.insert(0, running_g)
-
-        deltas = torch.tensor(gs, dtype=torch.float32)
-
-        log_probs = torch.stack(self.probs)  # Joint dimensions were summed in sample_action.
-
-        # Weight each timestep's joint-action log probability by its return.
-        loss = -torch.sum(log_probs * deltas)
-
-        loss.backward()
-        self.batch_episodes += 1
-
-        # Empty / zero out all episode-centric/related variables
-        self.probs = []
-        self.rewards = []
-
-    def update(self):
-        """Apply the mean gradient across the collected episodes."""
-        for parameter in self.policy_network.parameters():
-            if parameter.grad is not None:
-                parameter.grad.div_(self.batch_episodes)
+    def update(self, rollouts: list[Rollout]):
+        """Backpropagate the mean episode loss and update the policy once."""
+        losses = []
+        for rollout in rollouts:
+            discounted = 0.0
+            returns = []
+            for reward in reversed(rollout.rewards):
+                discounted = reward + self.gamma * discounted
+                returns.append(discounted)
+            returns.reverse()
+            weights = torch.tensor(returns, dtype=torch.float32)
+            losses.append(-(torch.stack(rollout.log_probs) * weights).sum())
+        torch.stack(losses).mean().backward()
         self.optimizer.step()
         self.optimizer.zero_grad()
-        self.batch_episodes = 0
 
 
-def record_checkpoint_video(agent, video_dir, episode, episode_len, seed):
+def collect_rollouts(agent, env, reset_seeds, batch):
+    """Advance the active simulations in MuJoCo and score them with the stand task."""
+    rollouts = [Rollout(seed) for seed in reset_seeds]
+    active = list(range(len(rollouts)))
+    observations = []
+    schedules = []
+    torso = env.torso_id
+    batch.reset(ids=active, stage=mujoco.mjtStage.mjSTAGE_NONE)
+    for i, seed in enumerate(reset_seeds):
+        obs, _ = env.reset(seed=seed)
+        observations.append(obs)
+        schedules.append(env.push_schedule)
+        mujoco.mj_getState(env.model, env.data, batch.state[i], mujoco.mjtState.mjSTATE_INTEGRATION)
+        wrench = env.push_wrench(schedules[i], 0)
+        if wrench is not None:
+            batch.xfrc_applied[i, torso] = wrench
+
+    low, high = env.action_space.low, env.action_space.high
+    step_number = 0
+    while active:
+        actions, log_probs = agent.sample_actions(np.stack([observations[i] for i in active]))
+        # Score the sampled actions and clip the commands sent to the actuators.
+        batch.ctrl[active] = env.standing_ctrl + np.clip(actions, low, high)
+        batch.step(ids=active, nstep=env.frame_skip, stage=mujoco.mjtStage.mjSTAGE_ACC)
+        step_number += 1
+        next_active = []
+        for i, log_prob in zip(active, log_probs.unbind()):
+            # Reuse one environment to score each simulation's contacts and COM.
+            batch.get_data(i, env.data)
+            observations[i], reward, terminated, truncated, info = env._step_result(step_number)
+            rollout = rollouts[i]
+            rollout.rewards.append(float(reward))
+            rollout.log_probs.append(log_prob)
+            if "reward_terms" in info:
+                rollout.component_rows.append(
+                    [info["reward_raw"][n] for n in COMPONENT_NAMES]
+                    + [info["reward_terms"][n] for n in COMPONENT_NAMES]
+                    + [info[n] for n in DIAGNOSTIC_NAMES]
+                )
+            if terminated or truncated:
+                rollout.info = info
+                rollout.truncated = truncated
+            else:
+                if env.pushes:
+                    # env.data holds this simulation's state at the start of its next step.
+                    wrench = env.push_wrench(schedules[i], step_number)
+                    batch.xfrc_applied[i, torso] = 0.0 if wrench is None else wrench
+                next_active.append(i)
+        active = next_active
+    return rollouts
+
+
+def record_checkpoint_video(agent, video_dir, episode, episode_len, seed, pushes=False):
     """Evaluate mean actions without changing training buffers or RNG state."""
     env = gym.wrappers.RecordVideo(
-        NuggetStandEnv(episode_len=episode_len, render_mode="rgb_array"),
+        NuggetStandEnv(episode_len=episode_len, pushes=pushes, render_mode="rgb_array"),
         video_folder=str(video_dir / f"episode_{episode:06d}"),
         episode_trigger=lambda _: True,
         name_prefix=f"episode_{episode:06d}",
@@ -185,64 +194,57 @@ def record_checkpoint_video(agent, video_dir, episode, episode_len, seed):
 
 
 def train(episodes=5000, seed=1, checkpoint_every=100, episode_len=500, videos=True,
-          batch_size=16, rollouts_per_reset=4):
+          batch_size=16, rollouts_per_reset=4, workers=4, previous_weights=PREVIOUS_WEIGHTS):
     """Run one training seed; save metrics and periodic policy checkpoints."""
     if batch_size < 1 or rollouts_per_reset < 1 or batch_size % rollouts_per_reset:
         raise ValueError("batch_size must be a positive multiple of rollouts_per_reset")
+    if min(episodes, checkpoint_every, episode_len, workers) < 1:
+        raise ValueError("episodes, checkpoint_every, episode_len and workers must be positive")
+    pushes = previous_weights is not None
+    if pushes:
+        initial_policy = torch.load(previous_weights, map_location="cpu", weights_only=True)["policy"]
     torch.manual_seed(seed)
-    random.seed(seed)
-    np.random.seed(seed)
     run_dir = PROJECT_ROOT / "runs" / "stand_reinforce" / datetime.now().strftime("%Y%m%d-%H%M%S-%f")
     checkpoint_dir = run_dir / "checkpoints"
     checkpoint_dir.mkdir(parents=True)
-    env = gym.wrappers.RecordEpisodeStatistics(
-        NuggetStandEnv(episode_len=episode_len), buffer_length=50
-    )
-    agent = REINFORCE(env.observation_space.shape[0], env.action_space.shape[0])
-    (run_dir / "reward_config.json").write_text(
-        json.dumps(env.unwrapped.reward_config, indent=2) + "\n"
-    )
-    component_names = ["height", "upright", "velocity", "fall"]
-    diagnostic_names = ["com_height_m", "tilt_rad", "com_speed_xy_m_s", "nonfoot_floor_contact"]
-    extra_columns = ([f"raw_{n}_mean" for n in component_names]
-                     + [f"weighted_{n}_mean" for n in component_names]
-                     + [f"{n}_mean" for n in diagnostic_names])
+    extra_columns = ([f"raw_{n}_mean" for n in COMPONENT_NAMES]
+                     + [f"weighted_{n}_mean" for n in COMPONENT_NAMES]
+                     + [f"{n}_mean" for n in DIAGNOSTIC_NAMES])
     print(f"Saving run to {run_dir}")
+    if pushes:
+        print(f"Push curriculum: initializing policy from {previous_weights}")
     print(f"Rollout batch: {batch_size // rollouts_per_reset} reset states x "
-          f"{rollouts_per_reset} rollouts = {batch_size} episodes/update")
-    try:
-        with (run_dir / "metrics.csv").open("w", newline="") as metrics_file:
-            writer = csv.writer(metrics_file)
-            writer.writerow(["episode", "reward", "length", "average_reward_50", "termination_reason", "nonfoot_floor_geoms", "reset_seed"] + extra_columns)
-            for episode in range(1, episodes + 1):
-                # Repeat each random starting state, with fresh policy action noise.
-                reset_seed = seed + (episode - 1) // rollouts_per_reset
-                obs, info = env.reset(seed=reset_seed)
-                done = False
-                component_rows = []
-                while not done:
-                    action = agent.sample_action(obs)
-                    # Keep the sampled action's log probability for REINFORCE;
-                    # clip only the command sent to the bounded position actuators.
-                    command = np.clip(action, env.action_space.low, env.action_space.high)
-                    obs, reward, terminated, truncated, info = env.step(command)
-                    if "reward_terms" in info:
-                        component_rows.append(
-                            [info["reward_raw"][n] for n in component_names]
-                            + [info["reward_terms"][n] for n in component_names]
-                            + [info[n] for n in diagnostic_names]
-                        )
-                    agent.rewards.append(float(reward))
-                    done = terminated or truncated
-                agent.finish_episode()
-                if episode % batch_size == 0 or episode == episodes:
-                    agent.update()
-                average = float(np.mean(env.return_queue))
-                writer.writerow([episode, float(env.return_queue[-1]),
-                                 int(env.length_queue[-1]), average,
-                                 info.get("termination_reason") or ("time_limit" if truncated else "unknown"),
-                                 "|".join(info.get("nonfoot_floor_geoms", [])), reset_seed]
-                                + (np.mean(component_rows, axis=0).tolist() if component_rows
+          f"{rollouts_per_reset} rollouts = {batch_size} episodes/update, {workers} step workers")
+    recent_returns = deque(maxlen=50)
+    with (
+        NuggetStandEnv(episode_len=episode_len, pushes=pushes) as env,
+        (run_dir / "metrics.csv").open("w", newline="") as metrics_file,
+    ):
+        batch = Batch(env.model, min(batch_size, episodes), nthread=workers, persistent=True)
+        agent = REINFORCE(env.observation_space.shape[0], env.action_space.shape[0])
+        if pushes:
+            agent.policy_network.load_state_dict(initial_policy)
+        (run_dir / "reward_config.json").write_text(json.dumps(env.reward_config, indent=2) + "\n")
+        writer = csv.writer(metrics_file)
+        writer.writerow(["episode", "reward", "length", "average_reward_50", "termination_reason",
+                         "nonfoot_floor_geoms", "reset_seed"] + extra_columns)
+        for first in range(1, episodes + 1, batch_size):
+            last = min(first + batch_size - 1, episodes)
+            # Episodes share reset seeds in groups, with fresh policy noise for each rollout.
+            reset_seeds = [seed + (episode - 1) // rollouts_per_reset
+                           for episode in range(first, last + 1)]
+            rollouts = collect_rollouts(agent, env, reset_seeds, batch)
+            for episode, rollout in enumerate(rollouts, start=first):
+                if episode == last:
+                    agent.update(rollouts)
+                reward = sum(rollout.rewards)
+                recent_returns.append(reward)
+                average = float(np.mean(recent_returns))
+                info = rollout.info
+                reason = info.get("termination_reason") or ("time_limit" if rollout.truncated else "unknown")
+                writer.writerow([episode, reward, len(rollout.rewards), average, reason,
+                                 "|".join(info.get("nonfoot_floor_geoms", [])), rollout.reset_seed]
+                                + (np.mean(rollout.component_rows, axis=0).tolist() if rollout.component_rows
                                    else [float("nan")] * len(extra_columns)))
                 metrics_file.flush()
                 if episode == 1 or episode % 10 == 0:
@@ -257,15 +259,16 @@ def train(episodes=5000, seed=1, checkpoint_every=100, episode_len=500, videos=T
                         "seed": seed,
                         "batch_size": batch_size,
                         "rollouts_per_reset": rollouts_per_reset,
+                        "workers": workers,
+                        "pushes": pushes,
+                        "previous_weights": str(previous_weights) if pushes else None,
                         "gamma": agent.gamma,
                         "episode_len": episode_len,
-                        "reward_config": env.unwrapped.reward_config,
+                        "reward_config": env.reward_config,
                     }, checkpoint_dir / f"episode_{episode:06d}.pt")
                     if videos:
                         record_checkpoint_video(agent, run_dir / "videos", episode,
-                                                episode_len, seed)
-    finally:
-        env.close()
+                                                episode_len, seed, pushes=pushes)
     return run_dir
 
 
@@ -277,11 +280,16 @@ if __name__ == "__main__":
     parser.add_argument("--episode-len", type=int, default=500)
     parser.add_argument("--batch-size", type=int, default=16, help="episodes averaged per policy update")
     parser.add_argument("--rollouts-per-reset", type=int, default=4, help="rollouts sharing each randomized starting state")
+    parser.add_argument("--workers", type=int, default=4, help="environment-step workers (1 steps environments serially)")
     parser.add_argument("--no-video", action="store_true", help="Skip checkpoint videos.")
+    parser.add_argument("--previous-weights", type=Path, default=PREVIOUS_WEIGHTS,
+                        help="standing checkpoint to initialize the policy and enable pushes")
     args = parser.parse_args()
-    if min(args.episodes, args.checkpoint_every, args.episode_len, args.batch_size, args.rollouts_per_reset) < 1:
-        parser.error("episode counts, checkpoint interval, batch size and rollouts per reset must be positive")
+    if min(args.episodes, args.checkpoint_every, args.episode_len, args.batch_size,
+           args.rollouts_per_reset, args.workers) < 1:
+        parser.error("all counts, including workers, must be positive")
     if args.batch_size % args.rollouts_per_reset:
         parser.error("--batch-size must be a multiple of --rollouts-per-reset")
     train(args.episodes, args.seed, args.checkpoint_every, args.episode_len,
-          videos=not args.no_video, batch_size=args.batch_size, rollouts_per_reset=args.rollouts_per_reset)
+          videos=not args.no_video, batch_size=args.batch_size, rollouts_per_reset=args.rollouts_per_reset,
+          workers=args.workers, previous_weights=args.previous_weights)

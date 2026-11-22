@@ -14,11 +14,27 @@ from nugget.evaluation.joint_plots import JointPlots
 from nugget.training.reinforce import Policy_Network
 
 
+def push_schedule_text(env):
+    times = ["Push schedule"]
+    forces = ["Force / direction"]
+    for push in env.push_schedule:
+        start = push.start_step * env.dt
+        end = (push.start_step + push.duration_steps) * env.dt
+        active = "  ACTIVE" if push.active_at(env.step_number - 1) else ""
+        times.append(f"{start:.2f}-{end:.2f} s")
+        forces.append(f"{push.magnitude_n:.2f} N / {np.rad2deg(push.direction_rad):.0f} deg{active}")
+    if not env.push_schedule:
+        times.append("No pushes scheduled")
+        forces.append("")
+    return "\n".join(times), "\n".join(forces)
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--policy", required=True, help="checkpoint .pt path, or 'zero' for zero offsets")
     parser.add_argument("--sample", action="store_true", help="sample policy noise instead of using its mean")
     parser.add_argument("--no-reset-noise", action="store_true", help="start at the exact standing pose")
+    parser.add_argument("--pushes", action="store_true", help="apply and display the seeded push schedule")
     parser.add_argument("--seed", type=int, default=42)
     parser.add_argument("--episode-len", type=int, help="override checkpoint duration (default 500 steps)")
     parser.add_argument("--headless", action="store_true", help="evaluate one episode without a window")
@@ -35,7 +51,7 @@ def main():
     if episode_len < 1:
         parser.error("--episode-len must be positive")
     torch.manual_seed(args.seed)
-    with NuggetStandEnv(episode_len=episode_len) as env:
+    with NuggetStandEnv(episode_len=episode_len, pushes=args.pushes) as env:
         policy = None
         if checkpoint:
             policy = Policy_Network(env.observation_space.shape[0], env.action_space.shape[0])
@@ -51,6 +67,10 @@ def main():
             return obs
 
         obs = reset()
+        if args.headless and args.pushes:
+            times, forces = push_schedule_text(env)
+            for time_label, force_label in zip(times.split("\n"), forces.split("\n"), strict=True):
+                print(f"{time_label:>18}  {force_label}")
         plots = None if args.headless else JointPlots(env.model, env.dt)
         if plots:
             plots.reset(env.data)
@@ -115,6 +135,12 @@ def main():
                 if viewer:
                     if show_plots:
                         plots.show(viewer)
+                    if args.pushes:
+                        viewer.set_texts((
+                            mujoco.mjtFontScale.mjFONTSCALE_100,
+                            mujoco.mjtGridPos.mjGRID_TOPLEFT,
+                            *push_schedule_text(env),
+                        ))
                     viewer.sync()
                     time.sleep(max(0, env.dt - (time.perf_counter() - tick)))
 
