@@ -56,7 +56,7 @@ sum of these step rewards.
 I used a simple policy network to predict means and log std for the actions using REINFORCE. Results:
 
 <p align="center">
-  <img src="docs/images/standing-reinforce-evaluation.png" alt="Standing training curves and held-out 10-second evaluation results" width="50%">
+  <img src="docs/images/standing-reinforce-evaluation.png" alt="Standing training curves and held-out 10-second evaluation results" width="80%">
 </p>
 
 Sources: 
@@ -69,8 +69,8 @@ After learning to control joints enough to fight out random environment noise, i
 
 <gif of /Users/domen/Documents/projects/toybots/nugget/runs/stand_reinforce/20261122-181159-765763/videos/episode_005000/episode_005000-episode-0.mp4>
 
-#### PPO
-
+#### Move to PPO
+It's hard to attribute what action caused the fall when training REINFORCE. 
 ## Dev guide
 
 ### Quickstart
